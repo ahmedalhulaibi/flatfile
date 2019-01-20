@@ -12,3 +12,6 @@ type FileHeader struct {
 	OriginatorID        string `ffp:"11,10"`
 }
 ```
+TODO:
+- [ ] Marshal method
+- [ ] Flat File abstraction
