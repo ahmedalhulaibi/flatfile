@@ -53,18 +53,28 @@ func Unmarshal(data []byte, v interface{}) error {
 
 					//fmt.Println(fieldType.String(), fieldType.Kind().String())
 
-					assignBasedOnKind(fieldType.Kind(), vStruct.Field(i), fieldData)
+					err := assignBasedOnKind(fieldType.Kind(), vStruct.Field(i), fieldData)
+					if err != nil {
+						return fmt.Errorf("ffparser: Failed to marshal.\n%s", err)
+					}
 				}
 			}
 		}
-
+		return nil
 	}
-	return nil
+	return fmt.Errorf("ffparser: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
 }
 
 //assignBasedOnKind performs assignment of fieldData to field based on kind
 func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
 	switch kind {
+	case reflect.Bool:
+		newFieldVal, err := strconv.ParseBool(string(fieldData))
+		//fmt.Println(newFieldVal)
+		if err != nil {
+			return err
+		}
+		field.Set(reflect.ValueOf(newFieldVal))
 	case reflect.Uint8:
 		var newFieldVal uint8
 		buf := bytes.NewReader(fieldData)
@@ -102,16 +112,14 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 			assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:])
 			fmt.Println(field.Elem())
 		}
-		//TODO: Pointer to other valid reflect.Kind
 	case reflect.Slice, reflect.Array:
-		//get underlying type, if struct then skip
+		//get underlying type, if slice or array of struct then skip
 		if field.Type().Elem().Kind() != reflect.Struct {
 			// fmt.Println("SLICE or ARRAY found", field.Type().Elem().Kind())
 			// fmt.Println(reflect.ValueOf(field))
 			// fmt.Println(field.Index(0))
 			for i := 0; i < field.Len(); i++ {
 				//fmt.Println("sl element interface", field.Index(i))
-
 				assignBasedOnKind(field.Type().Elem().Kind(), field.Index(i), fieldData[i:i+1])
 			}
 		}
