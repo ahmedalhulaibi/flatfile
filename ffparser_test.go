@@ -367,3 +367,58 @@ func TestInt8OutOfRangeErr(t *testing.T) {
 	t.Log(testVal)
 	t.Log(err)
 }
+
+func TestInt16(t *testing.T) {
+	type Int16Struct struct {
+		Int16One int16 `ffp:"1,6"`
+		Int16Two int16 `ffp:"7,5"`
+	}
+
+	testVal := &Int16Struct{}
+	data := []byte("-3276832767")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if testVal.Int16One != -32768 || testVal.Int16Two != 32767 {
+		t.Log(testVal)
+		t.Fail()
+	}
+}
+
+func TestInt16InvalidSyntaxErr(t *testing.T) {
+	type Int16Struct struct {
+		Int16One int16 `ffp:"1,1"`
+	}
+
+	testVal := &Int16Struct{}
+	data := []byte("$")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse int16")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestInt16OutOfRangeErr(t *testing.T) {
+	type Int16Struct struct {
+		Int16One int16 `ffp:"1,5"`
+	}
+
+	testVal := &Int16Struct{}
+	data := []byte("99999")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse int16")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
