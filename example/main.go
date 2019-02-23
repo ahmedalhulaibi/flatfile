@@ -10,7 +10,7 @@ import (
 )
 
 type FileHeader struct {
-	LogicalRecordTypeID byte   `ffp:"1,1"`
+	LogicalRecordTypeID string `ffp:"1,1"`
 	LogicalRecordCount  uint32 `ffp:"2,9"`
 	NameIdentifier      string `ffp:"11,10"`
 }
@@ -29,7 +29,8 @@ func main() {
 			eof = true
 		} else {
 			fileHeader := &FileHeader{}
-			err := ffparser.Unmarshal(data, fileHeader)
+			ffparser.Examine(fileHeader)
+			err := ffparser.Unmarshal(data, fileHeader, 0)
 			fmt.Printf("%#v\n", fileHeader)
 			checkError(err)
 		}
