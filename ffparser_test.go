@@ -125,7 +125,7 @@ func TestUint8InvalidSyntaxErr(t *testing.T) {
 	err := Unmarshal(data, testVal, 0)
 
 	if err == nil {
-		t.Error("Unmarshal should return error when failing to parse bool")
+		t.Error("Unmarshal should return error when failing to parse uint8")
 	}
 	t.Log(testVal.Uint8One)
 	t.Log(err)
@@ -142,9 +142,64 @@ func TestUint8OutOfRangeErr(t *testing.T) {
 	err := Unmarshal(data, testVal, 0)
 
 	if err == nil {
-		t.Error("Unmarshal should return error when failing to parse bool")
+		t.Error("Unmarshal should return error when failing to parse uint8")
 	}
 	t.Log(testVal.Uint8One)
+	t.Log(err)
+}
+
+func TestUint16(t *testing.T) {
+	type Uint16Struct struct {
+		Uint16One uint16 `ffp:"1,1"`
+		Uint16Two uint16 `ffp:"2,5"`
+	}
+
+	testVal := &Uint16Struct{}
+	data := []byte("165535")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if testVal.Uint16One != 1 || testVal.Uint16Two != 65535 {
+		t.Log(testVal)
+		t.Fail()
+	}
+}
+
+func TestUint16InvalidSyntaxErr(t *testing.T) {
+	type Uint16Struct struct {
+		Uint16One uint16 `ffp:"1,1"`
+	}
+
+	testVal := &Uint16Struct{}
+	data := []byte("$")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse uint16")
+	}
+	t.Log(testVal.Uint16One)
+	t.Log(err)
+}
+
+func TestUint16OutOfRangeErr(t *testing.T) {
+	type Uint16Struct struct {
+		Uint16One uint16 `ffp:"1,5"`
+	}
+
+	testVal := &Uint16Struct{}
+	data := []byte("99999")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse uint16")
+	}
+	t.Log(testVal.Uint16One)
 	t.Log(err)
 }
 
@@ -180,7 +235,7 @@ func TestUint32InvalidSyntaxErr(t *testing.T) {
 	err := Unmarshal(data, testVal, 0)
 
 	if err == nil {
-		t.Error("Unmarshal should return error when failing to parse bool")
+		t.Error("Unmarshal should return error when failing to parse uint32")
 	}
 	t.Log(testVal.Uint32One)
 	t.Log(err)
@@ -197,7 +252,7 @@ func TestUint32OutOfRangeErr(t *testing.T) {
 	err := Unmarshal(data, testVal, 0)
 
 	if err == nil {
-		t.Error("Unmarshal should return error when failing to parse bool")
+		t.Error("Unmarshal should return error when failing to parse uint32")
 	}
 	t.Log(testVal.Uint32One)
 	t.Log(err)
