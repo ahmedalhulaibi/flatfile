@@ -18,7 +18,7 @@ func TestBoolFalse(t *testing.T) {
 	testVal := &BoolStruct{}
 	data := []byte("0fFfalseFalseFALSE")
 
-	err := Unmarshal(data, testVal)
+	err := Unmarshal(data, testVal, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -45,7 +45,7 @@ func TestBoolTrue(t *testing.T) {
 	testVal := &BoolStruct{}
 	data := []byte("1tTtrueTrueTRUE")
 
-	err := Unmarshal(data, testVal)
+	err := Unmarshal(data, testVal, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -73,7 +73,7 @@ func TestBoolErr(t *testing.T) {
 	testVal := &BoolStruct{}
 	data := []byte("3aBerrrErrrERRR")
 
-	err := Unmarshal(data, testVal)
+	err := Unmarshal(data, testVal, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse bool")
