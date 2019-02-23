@@ -127,7 +127,7 @@ func TestUint8InvalidSyntaxErr(t *testing.T) {
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint8")
 	}
-	t.Log(testVal.Uint8One)
+	t.Log(testVal)
 	t.Log(err)
 }
 
@@ -144,7 +144,7 @@ func TestUint8OutOfRangeErr(t *testing.T) {
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint8")
 	}
-	t.Log(testVal.Uint8One)
+	t.Log(testVal)
 	t.Log(err)
 }
 
@@ -182,7 +182,7 @@ func TestUint16InvalidSyntaxErr(t *testing.T) {
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint16")
 	}
-	t.Log(testVal.Uint16One)
+	t.Log(testVal)
 	t.Log(err)
 }
 
@@ -199,7 +199,7 @@ func TestUint16OutOfRangeErr(t *testing.T) {
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint16")
 	}
-	t.Log(testVal.Uint16One)
+	t.Log(testVal)
 	t.Log(err)
 }
 
@@ -237,7 +237,7 @@ func TestUint32InvalidSyntaxErr(t *testing.T) {
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint32")
 	}
-	t.Log(testVal.Uint32One)
+	t.Log(testVal)
 	t.Log(err)
 }
 
@@ -254,7 +254,7 @@ func TestUint32OutOfRangeErr(t *testing.T) {
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint32")
 	}
-	t.Log(testVal.Uint32One)
+	t.Log(testVal)
 	t.Log(err)
 }
 
@@ -292,7 +292,7 @@ func TestUint64InvalidSyntaxErr(t *testing.T) {
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint64")
 	}
-	t.Log(testVal.Uint64One)
+	t.Log(testVal)
 	t.Log(err)
 }
 
@@ -309,6 +309,6 @@ func TestUint64OutOfRangeErr(t *testing.T) {
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint64")
 	}
-	t.Log(testVal.Uint64One)
+	t.Log(testVal)
 	t.Log(err)
 }
