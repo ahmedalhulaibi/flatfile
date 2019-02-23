@@ -422,3 +422,58 @@ func TestInt16OutOfRangeErr(t *testing.T) {
 	t.Log(testVal)
 	t.Log(err)
 }
+
+func TestInt32(t *testing.T) {
+	type Int32Struct struct {
+		Int32One int32 `ffp:"1,11"`
+		Int32Two int32 `ffp:"12,10"`
+	}
+
+	testVal := &Int32Struct{}
+	data := []byte("-21474836482147483647")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if testVal.Int32One != -2147483648 || testVal.Int32Two != 2147483647 {
+		t.Log(testVal)
+		t.Fail()
+	}
+}
+
+func TestInt32InvalidSyntaxErr(t *testing.T) {
+	type Int32Struct struct {
+		Int32One int32 `ffp:"1,1"`
+	}
+
+	testVal := &Int32Struct{}
+	data := []byte("$")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse int32")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestInt32OutOfRangeErr(t *testing.T) {
+	type Int32Struct struct {
+		Int32One int32 `ffp:"1,10"`
+	}
+
+	testVal := &Int32Struct{}
+	data := []byte("9999999999")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse int32")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
