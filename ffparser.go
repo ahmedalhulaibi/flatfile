@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"unsafe"
 )
 
 /*Unmarshal will read data and convert it into a struct based on a schema/map defined by struct tags
@@ -74,6 +75,8 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 	switch kind {
 	case reflect.Bool:
 		err = assignBool(kind, field, fieldData)
+	case reflect.Uint:
+		err = assignUint(kind, field, fieldData)
 	case reflect.Uint8:
 		err = assignUint8(kind, field, fieldData)
 	case reflect.Uint16:
@@ -82,6 +85,8 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 		err = assignUint32(kind, field, fieldData)
 	case reflect.Uint64:
 		err = assignUint64(kind, field, fieldData)
+	case reflect.Int:
+		err = assignInt(kind, field, fieldData)
 	case reflect.Int8:
 		err = assignInt8(kind, field, fieldData)
 	case reflect.Int16:
@@ -128,6 +133,38 @@ func assignBool(kind reflect.Kind, field reflect.Value, fieldData []byte) error 
 	return err
 }
 
+func assignUint(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
+	//Determine bitness using Sizeof
+	var dummy uint
+	switch unsafe.Sizeof(dummy) {
+	case 1:
+		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 8)
+		if err == nil {
+			field.Set(reflect.ValueOf(uint(newFieldVal)))
+		}
+		return err
+	case 2:
+		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 16)
+		if err == nil {
+			field.Set(reflect.ValueOf(uint(newFieldVal)))
+		}
+		return err
+	case 4:
+		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 32)
+		if err == nil {
+			field.Set(reflect.ValueOf(uint(newFieldVal)))
+		}
+		return err
+	case 8:
+		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 64)
+		if err == nil {
+			field.Set(reflect.ValueOf(uint(newFieldVal)))
+		}
+		return err
+	}
+	return fmt.Errorf("ffparser: Failed to assignUint %v ", field)
+}
+
 func assignUint8(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
 	newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 8)
 	if err == nil {
@@ -160,6 +197,38 @@ func assignUint64(kind reflect.Kind, field reflect.Value, fieldData []byte) erro
 	return err
 }
 
+func assignInt(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
+	//Determine bitness using Sizeof
+	var dummy int
+	switch unsafe.Sizeof(dummy) {
+	case 1:
+		newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 8)
+		if err == nil {
+			field.Set(reflect.ValueOf(int(newFieldVal)))
+		}
+		return err
+	case 2:
+		newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 16)
+		if err == nil {
+			field.Set(reflect.ValueOf(int(newFieldVal)))
+		}
+		return err
+	case 4:
+		newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 32)
+		if err == nil {
+			field.Set(reflect.ValueOf(int(newFieldVal)))
+		}
+		return err
+	case 8:
+		newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 64)
+		if err == nil {
+			field.Set(reflect.ValueOf(int(newFieldVal)))
+		}
+		return err
+	}
+	return fmt.Errorf("ffparser: Failed to assignInt %v ", field)
+}
+
 func assignInt8(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
 	newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 8)
 	if err == nil {
@@ -190,6 +259,11 @@ func assignInt64(kind reflect.Kind, field reflect.Value, fieldData []byte) error
 		field.Set(reflect.ValueOf(int64(newFieldVal)))
 	}
 	return err
+}
+
+// Examine traverses all elements of a type and uses the reflect pkg to print type and kind
+func Examine(v interface{}) {
+	examiner(reflect.TypeOf(v), 0)
 }
 
 // Below code is sourced from Jon Bodner's blog: https://medium.com/capital-one-tech/learning-to-use-go-reflection-822a0aed74b7
