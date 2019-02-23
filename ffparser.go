@@ -71,37 +71,31 @@ func Unmarshal(data []byte, v interface{}, posOffset int) error {
 
 //assignBasedOnKind performs assignment of fieldData to field based on kind
 func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
+	var err error
+	err = nil
 	switch kind {
 	case reflect.Bool:
-		newFieldVal, err := strconv.ParseBool(string(fieldData))
-		//fmt.Println(newFieldVal)
-		if err != nil {
-			return err
-		}
-		field.Set(reflect.ValueOf(newFieldVal))
+		err = assignBool(kind, field, fieldData)
 	case reflect.Uint8:
 		var newFieldVal uint8
 		buf := bytes.NewReader(fieldData)
-		err := binary.Read(buf, binary.BigEndian, &newFieldVal)
-		if err != nil {
-			return err
+		err = binary.Read(buf, binary.BigEndian, &newFieldVal)
+		if err == nil {
+			field.Set(reflect.ValueOf(newFieldVal))
 		}
-		field.Set(reflect.ValueOf(newFieldVal))
 	case reflect.Uint32:
 		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 32)
 		//fmt.Println(newFieldVal)
-		if err != nil {
-			return err
+		if err == nil {
+			field.Set(reflect.ValueOf(uint32(newFieldVal)))
 		}
-		field.Set(reflect.ValueOf(uint32(newFieldVal)))
 	case reflect.Uint64:
 		//fmt.Println("uint64 found")
 		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 32)
 		//fmt.Println(newFieldVal)
-		if err != nil {
-			return err
+		if err == nil {
+			field.Set(reflect.ValueOf(newFieldVal))
 		}
-		field.Set(reflect.ValueOf(newFieldVal))
 	case reflect.String:
 		field.Set(reflect.ValueOf(string(fieldData)))
 	case reflect.Struct:
@@ -128,6 +122,16 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 			}
 		}
 	}
+	return err
+}
+
+func assignBool(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
+	newFieldVal, err := strconv.ParseBool(string(fieldData))
+	//fmt.Println(newFieldVal)
+	if err != nil {
+		return err
+	}
+	field.Set(reflect.ValueOf(newFieldVal))
 	return nil
 }
 
