@@ -77,11 +77,7 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 	case reflect.Uint8:
 		err = assignUint8(kind, field, fieldData)
 	case reflect.Uint32:
-		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 32)
-		//fmt.Println(newFieldVal)
-		if err == nil {
-			field.Set(reflect.ValueOf(uint32(newFieldVal)))
-		}
+		err = assignUint32(kind, field, fieldData)
 	case reflect.Uint64:
 		//fmt.Println("uint64 found")
 		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 32)
@@ -131,6 +127,14 @@ func assignUint8(kind reflect.Kind, field reflect.Value, fieldData []byte) error
 	newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 8)
 	if err == nil {
 		field.Set(reflect.ValueOf(uint8(newFieldVal)))
+	}
+	return err
+}
+
+func assignUint32(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
+	newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 32)
+	if err == nil {
+		field.Set(reflect.ValueOf(uint32(newFieldVal)))
 	}
 	return err
 }

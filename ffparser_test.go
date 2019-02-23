@@ -147,3 +147,58 @@ func TestUint8OutOfRangeErr(t *testing.T) {
 	t.Log(testVal.Uint8One)
 	t.Log(err)
 }
+
+func TestUint32(t *testing.T) {
+	type Uint32Struct struct {
+		Uint32One uint32 `ffp:"1,1"`
+		Uint32Two uint32 `ffp:"2,10"`
+	}
+
+	testVal := &Uint32Struct{}
+	data := []byte("14294967295")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if testVal.Uint32One != 1 || testVal.Uint32Two != 4294967295 {
+		t.Log(testVal)
+		t.Fail()
+	}
+}
+
+func TestUint32InvalidSyntaxErr(t *testing.T) {
+	type Uint32Struct struct {
+		Uint32One uint32 `ffp:"1,1"`
+	}
+
+	testVal := &Uint32Struct{}
+	data := []byte("$")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse bool")
+	}
+	t.Log(testVal.Uint32One)
+	t.Log(err)
+}
+
+func TestUint32OutOfRangeErr(t *testing.T) {
+	type Uint32Struct struct {
+		Uint32One uint32 `ffp:"1,10"`
+	}
+
+	testVal := &Uint32Struct{}
+	data := []byte("9999999999")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse bool")
+	}
+	t.Log(testVal.Uint32One)
+	t.Log(err)
+}
