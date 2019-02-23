@@ -82,18 +82,20 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 		err = assignUint32(kind, field, fieldData)
 	case reflect.Uint64:
 		err = assignUint64(kind, field, fieldData)
+	case reflect.Int8:
+		err = assignInt8(kind, field, fieldData)
 	case reflect.String:
 		field.Set(reflect.ValueOf(string(fieldData)))
 	case reflect.Struct:
-		Unmarshal(fieldData, field.Addr().Interface(), 0)
+		err = Unmarshal(fieldData, field.Addr().Interface(), 0)
 	case reflect.Ptr:
 		//If pointer to struct
 		if field.Elem().Kind() == reflect.Struct {
 			//Unmarshal struct
-			Unmarshal(fieldData, field.Interface(), 0)
+			err = Unmarshal(fieldData, field.Interface(), 0)
 		} else {
 			fmt.Println(field.Elem())
-			assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:])
+			err = assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:])
 			fmt.Println(field.Elem())
 		}
 	case reflect.Slice, reflect.Array:
@@ -148,6 +150,14 @@ func assignUint64(kind reflect.Kind, field reflect.Value, fieldData []byte) erro
 	newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 64)
 	if err == nil {
 		field.Set(reflect.ValueOf(newFieldVal))
+	}
+	return err
+}
+
+func assignInt8(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
+	newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 8)
+	if err == nil {
+		field.Set(reflect.ValueOf(int8(newFieldVal)))
 	}
 	return err
 }

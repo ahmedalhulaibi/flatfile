@@ -312,3 +312,58 @@ func TestUint64OutOfRangeErr(t *testing.T) {
 	t.Log(testVal)
 	t.Log(err)
 }
+
+func TestInt8(t *testing.T) {
+	type Int8Struct struct {
+		Int8One int8 `ffp:"1,4"`
+		Int8Two int8 `ffp:"5,3"`
+	}
+
+	testVal := &Int8Struct{}
+	data := []byte("-128127")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if testVal.Int8One != -128 || testVal.Int8Two != 127 {
+		t.Log(testVal)
+		t.Fail()
+	}
+}
+
+func TestInt8InvalidSyntaxErr(t *testing.T) {
+	type Int8Struct struct {
+		Int8One int8 `ffp:"1,1"`
+	}
+
+	testVal := &Int8Struct{}
+	data := []byte("$")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse int8")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestInt8OutOfRangeErr(t *testing.T) {
+	type Int8Struct struct {
+		Int8One int8 `ffp:"1,4"`
+	}
+
+	testVal := &Int8Struct{}
+	data := []byte("2555")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse int8")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
