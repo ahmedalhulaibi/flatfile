@@ -88,6 +88,8 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 		err = assignInt16(kind, field, fieldData)
 	case reflect.Int32:
 		err = assignInt32(kind, field, fieldData)
+	case reflect.Int64:
+		err = assignInt64(kind, field, fieldData)
 	case reflect.String:
 		field.Set(reflect.ValueOf(string(fieldData)))
 	case reflect.Struct:
@@ -178,6 +180,14 @@ func assignInt32(kind reflect.Kind, field reflect.Value, fieldData []byte) error
 	newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 32)
 	if err == nil {
 		field.Set(reflect.ValueOf(int32(newFieldVal)))
+	}
+	return err
+}
+
+func assignInt64(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
+	newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 64)
+	if err == nil {
+		field.Set(reflect.ValueOf(int64(newFieldVal)))
 	}
 	return err
 }

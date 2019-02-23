@@ -477,3 +477,58 @@ func TestInt32OutOfRangeErr(t *testing.T) {
 	t.Log(testVal)
 	t.Log(err)
 }
+
+func TestInt64(t *testing.T) {
+	type Int64Struct struct {
+		Int64One int64 `ffp:"1,20"`
+		Int64Two int64 `ffp:"21,19"`
+	}
+
+	testVal := &Int64Struct{}
+	data := []byte("-92233720368547758089223372036854775807")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if testVal.Int64One != -9223372036854775808 || testVal.Int64Two != 9223372036854775807 {
+		t.Log(testVal)
+		t.Fail()
+	}
+}
+
+func TestInt64InvalidSyntaxErr(t *testing.T) {
+	type Int64Struct struct {
+		Int64One int64 `ffp:"1,1"`
+	}
+
+	testVal := &Int64Struct{}
+	data := []byte("$")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse int64")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestInt64OutOfRangeErr(t *testing.T) {
+	type Int64Struct struct {
+		Int64One int64 `ffp:"1,19"`
+	}
+
+	testVal := &Int64Struct{}
+	data := []byte("9999999999999999999")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse int64")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
