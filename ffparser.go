@@ -1,8 +1,6 @@
 package ffparser
 
 import (
-	"bytes"
-	"encoding/binary"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -77,12 +75,7 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 	case reflect.Bool:
 		err = assignBool(kind, field, fieldData)
 	case reflect.Uint8:
-		var newFieldVal uint8
-		buf := bytes.NewReader(fieldData)
-		err = binary.Read(buf, binary.BigEndian, &newFieldVal)
-		if err == nil {
-			field.Set(reflect.ValueOf(newFieldVal))
-		}
+		err = assignUint8(kind, field, fieldData)
 	case reflect.Uint32:
 		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 32)
 		//fmt.Println(newFieldVal)
@@ -128,11 +121,18 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 func assignBool(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
 	newFieldVal, err := strconv.ParseBool(string(fieldData))
 	//fmt.Println(newFieldVal)
-	if err != nil {
-		return err
+	if err == nil {
+		field.Set(reflect.ValueOf(newFieldVal))
 	}
-	field.Set(reflect.ValueOf(newFieldVal))
-	return nil
+	return err
+}
+
+func assignUint8(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
+	newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 8)
+	if err == nil {
+		field.Set(reflect.ValueOf(uint8(newFieldVal)))
+	}
+	return err
 }
 
 // Below code is sourced from Jon Bodner's blog: https://medium.com/capital-one-tech/learning-to-use-go-reflection-822a0aed74b7

@@ -5,6 +5,17 @@ import (
 	"testing"
 )
 
+/*
+uint8  : 0 to 255
+uint16 : 0 to 65535
+uint32 : 0 to 4294967295
+uint64 : 0 to 18446744073709551615
+int8   : -128 to 127
+int16  : -32768 to 32767
+int32  : -2147483648 to 2147483647
+int64  : -9223372036854775808 to 9223372036854775807
+*/
+
 func TestBoolFalse(t *testing.T) {
 	type BoolStruct struct {
 		BoolFalse1 bool `ffp:"1,1"`
@@ -22,6 +33,7 @@ func TestBoolFalse(t *testing.T) {
 
 	if err != nil {
 		t.Error(err)
+		t.Fail()
 	}
 	vStruct := reflect.ValueOf(testVal).Elem()
 
@@ -76,6 +88,45 @@ func TestBoolErr(t *testing.T) {
 	err := Unmarshal(data, testVal, 0)
 
 	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse bool")
+	}
+	t.Log(err)
+}
+
+func TestUint8(t *testing.T) {
+	type Uint8Struct struct {
+		Uint8One uint8 `ffp:"1,1"`
+		Uint8Two uint8 `ffp:"2,3"`
+	}
+
+	testVal := &Uint8Struct{}
+	data := []byte("1255")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if testVal.Uint8One != 1 || testVal.Uint8Two != 255 {
+		t.Log(testVal)
+		t.Fail()
+	}
+}
+
+func TestUint8Err(t *testing.T) {
+	type Uint8Struct struct {
+		Uint8One uint8 `ffp:"1,1"`
+		Uint8Two uint8 `ffp:"2,4"`
+	}
+
+	testVal := &Uint8Struct{}
+	data := []byte("$255")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Log(testVal)
 		t.Error("Unmarshal should return error when failing to parse bool")
 	}
 	t.Log(err)
