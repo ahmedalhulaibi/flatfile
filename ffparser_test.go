@@ -114,20 +114,36 @@ func TestUint8(t *testing.T) {
 	}
 }
 
-func TestUint8Err(t *testing.T) {
+func TestUint8InvalidSyntaxErr(t *testing.T) {
 	type Uint8Struct struct {
 		Uint8One uint8 `ffp:"1,1"`
-		Uint8Two uint8 `ffp:"2,4"`
 	}
 
 	testVal := &Uint8Struct{}
-	data := []byte("$255")
+	data := []byte("$")
 
 	err := Unmarshal(data, testVal, 0)
 
 	if err == nil {
-		t.Log(testVal)
 		t.Error("Unmarshal should return error when failing to parse bool")
 	}
+	t.Log(testVal.Uint8One)
+	t.Log(err)
+}
+
+func TestUint8OutOfRangeErr(t *testing.T) {
+	type Uint8Struct struct {
+		Uint8One uint8 `ffp:"1,4"`
+	}
+
+	testVal := &Uint8Struct{}
+	data := []byte("2555")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse bool")
+	}
+	t.Log(testVal.Uint8One)
 	t.Log(err)
 }
