@@ -9,16 +9,20 @@ import (
 	"strings"
 )
 
-/*Unmarshal maps a slice of bytes to a struct based on defined ffp struct tags
-Struct tags are in the form `ffp:"pos,len"`
+/*Unmarshal will read data and convert it into a struct based on a schema/map defined by struct tags
+Struct tags are in the form `ffp:"pos,len"`. An offset can be pass to the function when reading long lines of data.
+The offset will be added to pos.
 Example:
 type FileHeader struct {
 	LogicalRecordTypeID byte   `ffp:"1,1"`
 	LogicalRecordCount  uint32 `ffp:"2,9"`
 	OriginatorID        string `ffp:"11,10"`
 }
+data: contains the data that will be mapped to struct properties
+v: must be a pointer to a struct
+posOffset:
 */
-func Unmarshal(data []byte, v interface{}) error {
+func Unmarshal(data []byte, v interface{}, posOffset int) error {
 
 	if reflect.TypeOf(v).Kind() == reflect.Ptr {
 		//Get underlying type
@@ -101,19 +105,19 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 	case reflect.String:
 		field.Set(reflect.ValueOf(string(fieldData)))
 	case reflect.Struct:
-		Unmarshal(fieldData, field.Addr().Interface())
+		Unmarshal(fieldData, field.Addr().Interface(), 0)
 	case reflect.Ptr:
 		//If pointer to struct
 		if field.Elem().Kind() == reflect.Struct {
 			//Unmarshal struct
-			Unmarshal(fieldData, field.Interface())
+			Unmarshal(fieldData, field.Interface(), 0)
 		} else {
 			fmt.Println(field.Elem())
 			assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:])
 			fmt.Println(field.Elem())
 		}
 	case reflect.Slice, reflect.Array:
-		//get underlying type, if slice or array of struct then skip
+		//get underlying type, if not struct (slice, array) then skip
 		if field.Type().Elem().Kind() != reflect.Struct {
 			// fmt.Println("SLICE or ARRAY found", field.Type().Elem().Kind())
 			// fmt.Println(reflect.ValueOf(field))
@@ -127,6 +131,8 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 	return nil
 }
 
+// Below code is sourced from Jon Bodner's blog: https://medium.com/capital-one-tech/learning-to-use-go-reflection-822a0aed74b7
+// Direct link to Gist: https://gist.github.com/jonbodner/1727d0825d73541db8d6fcb859515735
 func examiner(t reflect.Type, depth int) {
 	fmt.Println(strings.Repeat("\t", depth), "Type is", t.Name(), "and kind is", t.Kind())
 	switch t.Kind() {
