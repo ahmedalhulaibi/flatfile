@@ -1,6 +1,7 @@
 package ffparser
 
 import (
+	"math"
 	"reflect"
 	"testing"
 )
@@ -528,6 +529,116 @@ func TestInt64OutOfRangeErr(t *testing.T) {
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int64")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFloat32(t *testing.T) {
+	type Float32Struct struct {
+		Float32One float32 `ffp:"1,22"`
+		Float32Two float32 `ffp:"23,21"`
+	}
+
+	testVal := &Float32Struct{}
+	data := []byte("3.4028234663852886e+381.401298464324817e-45")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if testVal.Float32One != math.MaxFloat32 || testVal.Float32Two != math.SmallestNonzeroFloat32 {
+		t.Log(testVal)
+		t.Fail()
+	}
+}
+
+func TestFloat32InvalidSyntaxErr(t *testing.T) {
+	type Float32Struct struct {
+		Float32One float32 `ffp:"1,1"`
+	}
+
+	testVal := &Float32Struct{}
+	data := []byte("$")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse Float32")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFloat32OutOfRangeErr(t *testing.T) {
+	type Float32Struct struct {
+		Float32One float32 `ffp:"1,40"`
+	}
+
+	testVal := &Float32Struct{}
+	data := []byte("9999999999999999999999999999999999999999")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse Float32")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFloat64(t *testing.T) {
+	type Float64Struct struct {
+		Float64One float64 `ffp:"1,23"`
+		Float64Two float64 `ffp:"24,6"`
+	}
+
+	testVal := &Float64Struct{}
+	data := []byte("1.7976931348623157e+3085e-324")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if testVal.Float64One != math.MaxFloat64 || testVal.Float64Two != math.SmallestNonzeroFloat64 {
+		t.Log(testVal)
+		t.Fail()
+	}
+}
+
+func TestFloat64InvalidSyntaxErr(t *testing.T) {
+	type Float64Struct struct {
+		Float64One float64 `ffp:"1,1"`
+	}
+
+	testVal := &Float64Struct{}
+	data := []byte("$")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse Float64")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFloat64OutOfRangeErr(t *testing.T) {
+	type Float64Struct struct {
+		Float64One float64 `ffp:"1,23"`
+	}
+
+	testVal := &Float64Struct{}
+	data := []byte("2.7976931348623157e+308")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return error when failing to parse Float64")
 	}
 	t.Log(testVal)
 	t.Log(err)
