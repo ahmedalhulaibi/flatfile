@@ -23,6 +23,8 @@ Data type support:
 - [x] uint64
 - [ ] float32
 - [ ] float64
+- [ ] Slice
+- [ ] Array
 - [x] Nested struct
 
 TODO:

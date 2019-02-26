@@ -109,8 +109,9 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 			err = assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:])
 			fmt.Println(field.Elem())
 		}
+	//Slice, Array assignment is a WIP. Consider this not implemented
 	case reflect.Slice, reflect.Array:
-		//get underlying type, if not struct (slice, array) then skip
+		//get underlying type, if struct then skip
 		if field.Type().Elem().Kind() != reflect.Struct {
 			// fmt.Println("SLICE or ARRAY found", field.Type().Elem().Kind())
 			// fmt.Println(reflect.ValueOf(field))
