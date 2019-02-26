@@ -8,6 +8,12 @@ import (
 	"unsafe"
 )
 
+type ffpTag struct {
+	pos    int
+	len    int
+	occurs int
+}
+
 /*Unmarshal will read data and convert it into a struct based on a schema/map defined by struct tags
 Struct tags are in the form `ffp:"pos,len"`. An offset can be pass to the function when reading long lines of data.
 The offset will be added to pos.
@@ -68,6 +74,24 @@ func Unmarshal(data []byte, v interface{}, posOffset int) error {
 	return fmt.Errorf("ffparser: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
 }
 
+func parseFfpTag(fieldTag string) (*ffpTag, error) {
+
+	//split tag by comma to get position and length data
+	params := strings.Split(fieldTag, ",")
+	pos, poserr := strconv.Atoi(params[0])
+	if poserr != nil {
+		fmt.Println(poserr)
+		return nil, poserr
+	}
+	len, lenerr := strconv.Atoi(params[1])
+	if lenerr != nil {
+		fmt.Println(lenerr)
+		return nil, lenerr
+	}
+
+	return &ffpTag{pos: pos, len: len, occurs: 0}, nil
+}
+
 //assignBasedOnKind performs assignment of fieldData to field based on kind
 func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
 	var err error
@@ -114,7 +138,8 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 			fmt.Println(field.Elem())
 		}
 	//Slice, Array assignment is a WIP. Consider this not implemented
-	case reflect.Slice, reflect.Array:
+	//The length of the array
+	case reflect.Array:
 		//get underlying type, if struct then skip
 		if field.Type().Elem().Kind() != reflect.Struct {
 			// fmt.Println("SLICE or ARRAY found", field.Type().Elem().Kind())
@@ -125,6 +150,7 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 				assignBasedOnKind(field.Type().Elem().Kind(), field.Index(i), fieldData[i:i+1])
 			}
 		}
+	case reflect.Slice:
 	}
 	return err
 }
