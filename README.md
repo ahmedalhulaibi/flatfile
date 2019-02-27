@@ -12,44 +12,6 @@ This library provides a method `Unmarshal` which will read a record (slice of by
 
 The intent is to eliminate boilerplate code for reading data from a flat file and mapping it to the fields in a struct.
 
-Data type support:
-- [x] bool
-- [x] string
-- [x] int
-- [x] int8
-- [x] int16
-- [x] int32
-- [x] int64
-- [x] uint
-- [x] uint8
-- [x] uint16
-- [x] uint32
-- [x] uint64
-- [x] float32
-- [x] float64
-- [x] Slice
-- [x] Array
-- [x] Nested struct
-
-# Features
-- [x] Slice, Array support AKA Emulate [COBOL occurs clause](https://www.ibm.com/support/knowledgecenter/en/SS6SG3_4.2.0/com.ibm.entcobol.doc_4.2/PGandLR/tasks/tptbl03.htm)
-
-## TODO:
-- [ ] Offset feature to support reading long lines of data.
-
-    if record exceeds a maximum buffer size, a partial unmarshal can be done
-    on the next read, the rest of the data can be unmarshalled into the same instance by passing in a position offset
-
-- [ ] Flat File abstraction
-- [ ] Support for conditional unmarshal 
-    
-    if field(pos,len) == "text" do unmarshal else skip. 
-    
-    This is useful for flat files where there are multiple record layouts within the same file.
-
-- [ ] Byte and Rune support using type override. 
-
-    These are aliases for uint8 and int32 respectively. uint8 and int32 are currenlt parsed as actual numbers not the byte value of the data read in.
 
 # Usage
 
@@ -95,7 +57,7 @@ func main() {
 ```
 
 
-### Example of how to read into slices
+### Example of how to read into struct that contains a slice
 
 ```go
 package main
@@ -139,7 +101,7 @@ func main() {
 
 
 
-### Example of how to read into an array
+### Example of how to read into a struct that contains an array
 
 ```go
 package main
@@ -180,3 +142,45 @@ func main() {
 }
 
 ```
+
+
+
+# Features
+
+## Data type support:
+- [x] bool
+- [x] string
+- [x] int
+- [x] int8
+- [x] int16
+- [x] int32
+- [x] int64
+- [x] uint
+- [x] uint8
+- [x] uint16
+- [x] uint32
+- [x] uint64
+- [x] float32
+- [x] float64
+- [x] Slice
+- [x] Array
+- [x] Nested struct
+
+- [x] Slice, Array support AKA Emulate [COBOL occurs clause](https://www.ibm.com/support/knowledgecenter/en/SS6SG3_4.2.0/com.ibm.entcobol.doc_4.2/PGandLR/tasks/tptbl03.htm)
+
+## TODO:
+- [ ] Offset feature to support reading long lines of data.
+
+    if record exceeds a maximum buffer size, a partial unmarshal can be done
+    on the next read, the rest of the data can be unmarshalled into the same instance by passing in a position offset
+
+- [ ] Flat File abstraction
+- [ ] Support for conditional unmarshal 
+    
+    if field(pos,len) == "text" do unmarshal else skip. 
+    
+    This is useful for flat files where there are multiple record layouts within the same file.
+
+- [ ] Byte and Rune support using type override. 
+
+    These are aliases for uint8 and int32 respectively. uint8 and int32 are currenlt parsed as actual numbers not the byte value of the data read in.
