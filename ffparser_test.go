@@ -728,3 +728,27 @@ func TestFfpTagParseMissingParamErr(t *testing.T) {
 	t.Log(testVal)
 	t.Log(err)
 }
+
+func TestArrayParse(t *testing.T) {
+	type FfpTest struct {
+		TestVal [4]int `ffp:"1,2"`
+	}
+
+	testVal := &FfpTest{}
+	expectedVal := [4]int{11, 22, 33, 44}
+
+	data := []byte("11223344")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Error("Unmarshal should return missing parameter error")
+		t.Fail()
+	}
+
+	if testVal.TestVal != expectedVal {
+		t.Error("Unexpected results.")
+		t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedVal, testVal.TestVal)
+		t.Fail()
+	}
+}
