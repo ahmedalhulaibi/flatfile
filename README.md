@@ -1,17 +1,14 @@
 # ffparser
 
-The purpose of this package is provide a utility to read a record from a structured [flat-file database](https://en.wikipedia.org/wiki/Flat-file_database) or a record from a text file into a struct.
+The purpose of this package is provide a utility to read a record from a structured [flat-file database](https://en.wikipedia.org/wiki/Flat-file_database) or a record from a text file into a struct. The intent is to eliminate boilerplate code for reading data from a flat file and mapping it to the fields in a struct.
 
-This package allows you to define your record layout using struct tags.
+This package allows you to define your record layout mapping using struct tags.
 
 Each field in a struct can be mapped to a single field in a record using a struct tag.
 
 Struct tags are in the form `ffp:"pos,len"` or for a slice field `ffp:"pos,len,occurences"`.
 
 This library provides a method `Unmarshal` which will read a record (slice of bytes) into a struct.
-
-The intent is to eliminate boilerplate code for reading data from a flat file and mapping it to the fields in a struct.
-
 
 # Usage
 
