@@ -643,3 +643,88 @@ func TestFloat64OutOfRangeErr(t *testing.T) {
 	t.Log(testVal)
 	t.Log(err)
 }
+
+func TestFfpTagParsePosSyntaxErr(t *testing.T) {
+	type FfpTest struct {
+		TestVal string `ffp:"asdf,1"`
+	}
+
+	testVal := &FfpTest{}
+	data := []byte("2.7976931348623157e+308")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return syntax error when failing to parse position param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFfpTagParseLenSyntaxErr(t *testing.T) {
+	type FfpTest struct {
+		TestVal string `ffp:"1,asdf"`
+	}
+
+	testVal := &FfpTest{}
+	data := []byte("2.7976931348623157e+308")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return syntax error when failing to parse length param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFfpTagParsePosRangeErr(t *testing.T) {
+	type FfpTest struct {
+		TestVal string `ffp:"-1,10"`
+	}
+
+	testVal := &FfpTest{}
+	data := []byte("2.7976931348623157e+308")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return out of range error when failing to parse position param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFfpTagParseLenRangeErr(t *testing.T) {
+	type FfpTest struct {
+		TestVal string `ffp:"1,-1"`
+	}
+
+	testVal := &FfpTest{}
+	data := []byte("2.7976931348623157e+308")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return out of range error when failing to parse length param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFfpTagParseMissingParamErr(t *testing.T) {
+	type FfpTest struct {
+		TestVal string `ffp:""`
+	}
+
+	testVal := &FfpTest{}
+	data := []byte("2.7976931348623157e+308")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return missing parameter error")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
