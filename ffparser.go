@@ -28,7 +28,8 @@ v: must be a pointer to a struct
 posOffset:
 */
 func Unmarshal(data []byte, v interface{}, posOffset uint) error {
-	var ffpTag ffpTagType
+	//init ffpTag for later use
+	ffpTag := &ffpTagType{}
 	if reflect.TypeOf(v).Kind() == reflect.Ptr {
 		//Get underlying type
 		vType := reflect.TypeOf(v).Elem()
@@ -56,7 +57,7 @@ func Unmarshal(data []byte, v interface{}, posOffset uint) error {
 					// if lenerr != nil {
 					// 	fmt.Println(poserr)
 					// }
-					tagParseErr := parseFfpTag(fieldTag, &ffpTag)
+					tagParseErr := parseFfpTag(fieldTag, ffpTag)
 					if tagParseErr != nil {
 						return fmt.Errorf("ffparser: Failed to parse field tag %s:\n\t%s", fieldTag, tagParseErr)
 					}
@@ -65,7 +66,7 @@ func Unmarshal(data []byte, v interface{}, posOffset uint) error {
 
 					//fmt.Println(fieldType.String(), fieldType.Kind().String())
 
-					err := assignBasedOnKind(fieldType.Kind(), vStruct.Field(i), fieldData)
+					err := assignBasedOnKind(fieldType.Kind(), vStruct.Field(i), fieldData, ffpTag)
 					if err != nil {
 						return fmt.Errorf("ffparser: Failed to marshal.\n%s", err)
 					}
@@ -118,7 +119,7 @@ func parseFfpTag(fieldTag string, ffpTag *ffpTagType) error {
 }
 
 //assignBasedOnKind performs assignment of fieldData to field based on kind
-func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
+func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte, ffpTag *ffpTagType) error {
 	var err error
 	err = nil
 	switch kind {
@@ -159,21 +160,15 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 			err = Unmarshal(fieldData, field.Interface(), 0)
 		} else {
 			fmt.Println(field.Elem())
-			err = assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:])
+			err = assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:], ffpTag)
 			fmt.Println(field.Elem())
 		}
-	//Slice, Array assignment is a WIP. Consider this not implemented
-	//The length of the array
 	case reflect.Array:
-		//get underlying type, if struct then skip
-		if field.Type().Elem().Kind() != reflect.Struct {
-			// fmt.Println("SLICE or ARRAY found", field.Type().Elem().Kind())
-			// fmt.Println(reflect.ValueOf(field))
-			// fmt.Println(field.Index(0))
-			for i := 0; i < field.Len(); i++ {
-				//fmt.Println("sl element interface", field.Index(i))
-				assignBasedOnKind(field.Type().Elem().Kind(), field.Index(i), fieldData[i:i+1])
-			}
+		for i := 0; i < field.Len(); i++ {
+			//fmt.Println("sl element interface", field.Index(i))
+			lowerBound := uint(i) * ffpTag.len
+			upperBound := lowerBound + ffpTag.len
+			assignBasedOnKind(field.Type().Elem().Kind(), field.Index(i), fieldData[lowerBound:upperBound], ffpTag)
 		}
 	case reflect.Slice:
 	}

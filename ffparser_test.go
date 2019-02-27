@@ -731,13 +731,16 @@ func TestFfpTagParseMissingParamErr(t *testing.T) {
 
 func TestArrayParse(t *testing.T) {
 	type FfpTest struct {
-		TestVal [4]int `ffp:"1,2"`
+		TestVal [4]int     `ffp:"1,2"`
+		Names   [10]string `ffp:"9,3"`
 	}
 
 	testVal := &FfpTest{}
 	expectedVal := [4]int{11, 22, 33, 44}
 
-	data := []byte("11223344")
+	expectedNames := [10]string{"AMY", "BOB", "CAM", "DAN", "EDD", "FAE", "GUY", "HIM", "IGG", "JAY"}
+
+	data := []byte("11223344AMYBOBCAMDANEDDFAEGUYHIMIGGJAY")
 
 	err := Unmarshal(data, testVal, 0)
 
@@ -750,5 +753,41 @@ func TestArrayParse(t *testing.T) {
 		t.Error("Unexpected results.")
 		t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedVal, testVal.TestVal)
 		t.Fail()
+	}
+
+	if testVal.Names != expectedNames {
+		t.Error("Unexpected results.")
+		t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedNames, testVal.Names)
+		t.Fail()
+
+	}
+}
+
+func TestArrayNestedStructParse(t *testing.T) {
+	type Name struct {
+		NameData string `ffp:"1,3"`
+	}
+	type FfpTest struct {
+		Names [3]Name `ffp:"1,3"`
+	}
+
+	testVal := &FfpTest{}
+
+	expectedNames := [3]Name{Name{NameData: "AMY"}, Name{NameData: "BOB"}, Name{NameData: "CAM"}}
+
+	data := []byte("AMYBOBCAM")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Error("Unmarshal should return missing parameter error")
+		t.Fail()
+	}
+
+	if testVal.Names != expectedNames {
+		t.Error("Unexpected results.")
+		t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedNames, testVal.Names)
+		t.Fail()
+
 	}
 }
