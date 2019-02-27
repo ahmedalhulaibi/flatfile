@@ -1,13 +1,16 @@
 # ffparser
 
-The purpose of this library is provide a utility to read a record from structured [flat-file database](https://en.wikipedia.org/wiki/Flat-file_database).
+The purpose of this package is provide a utility to read a record from a structured [flat-file database](https://en.wikipedia.org/wiki/Flat-file_database) or a record from a text file into a struct.
 
+This package allows you to define your record layout using struct tags.
 
-This library provides a method `Unmarshal` which will convert a slice of bytes to fields in a struct based on defined struct tags. 
+Each field in a struct can be mapped to a single field in a record using a struct tag.
 
-Struct tags are in the form `ffp:"pos,len"` or optionally `ffp:"pos,len,occurs"`
+Struct tags are in the form `ffp:"pos,len"` or for a slice field `ffp:"pos,len,occurences"`.
 
-The intent is to eliminate boilerplate code for reading data from a flat file and mapping it to the properties in a struct.
+This library provides a method `Unmarshal` which will read a record (slice of bytes) into a struct.
+
+The intent is to eliminate boilerplate code for reading data from a flat file and mapping it to the fields in a struct.
 
 Data type support:
 - [x] bool
@@ -28,12 +31,14 @@ Data type support:
 - [x] Array
 - [x] Nested struct
 
-TODO:
+# Features
 - [x] Slice, Array support AKA Emulate [COBOL occurs clause](https://www.ibm.com/support/knowledgecenter/en/SS6SG3_4.2.0/com.ibm.entcobol.doc_4.2/PGandLR/tasks/tptbl03.htm)
+
+## TODO:
 - [ ] Flat File abstraction
 - [ ] Support for conditional unmarshal 
       if field(pos,len) == "text" do unmarshal else skip
-- [ ] Byte and Rune support using type override
+- [ ] Byte and Rune support using type override. These are aliases for uint8 and int32 respectively. uint8 and int32 are parsed as actual numbers not taking the byte value of the data read in.
 
 # Usage
 
@@ -42,3 +47,80 @@ Use your favourite dependency tool to pull the code. dep, go mod, etc. Or use go
 `go get github.com/ahmedalhulaibi/ffparser`
 
 ## [Examples](https://github.com/ahmedalhulaibi/ffparser/tree/master/example)
+
+### A simple example of reading a slice of bytes into a struct
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/ahmedalhulaibi/ffparser"
+)
+
+type CustomerRecord struct {
+    //ffparser is one indexed, position starts at 1
+	Name        string `ffp:"1,3"`
+	OpenDate    string `ffp:"4,10"`
+	Age         uint   `ffp:"14,3"`
+	Address     string `ffp:"17,15"`
+	CountryCode string `ffp:"32,2"`
+}
+
+func main() {
+	data := []byte("AMY1900-01-01019123 FAKE STREETCA")
+
+	fileHeader := &CustomerRecord{}
+	ffparser.Examine(fileHeader)
+
+	err := ffparser.Unmarshal(data, fileHeader, 0)
+	fmt.Printf("%v\n", fileHeader)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+```
+
+
+### Example of how to read into slices
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/ahmedalhulaibi/ffparser"
+)
+
+type CustomerRecord struct {
+    //ffparser is one indexed, position starts at 1
+	Name        string `ffp:"1,3"`
+	OpenDate    string `ffp:"4,10"`
+	Age         uint   `ffp:"14,3"`
+	Address     string `ffp:"17,15"`
+	CountryCode string `ffp:"32,2"`
+	//The below tag is in the form "pos,len,occurences"
+	//The phone numbers start at position 34 (one indexed)
+	//The phone numbers are each number 10 bytes long
+	//There are 2 phone numbers total
+	PhoneNumbers []string `ffp:"34,10,2"`
+}
+
+func main() {
+	data := []byte("AMY1900-01-01019123 FAKE STREETCA41611122229053334444")
+
+	fileHeader := &CustomerRecord{}
+	ffparser.Examine(fileHeader)
+
+	err := ffparser.Unmarshal(data, fileHeader, 0)
+	fmt.Printf("%v\n", fileHeader)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+```

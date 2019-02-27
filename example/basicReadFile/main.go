@@ -10,6 +10,7 @@ import (
 )
 
 type CustomerRecord struct {
+	//ffparser is one indexed, position starts at 1
 	Name        string `ffp:"1,3"`
 	OpenDate    string `ffp:"4,10"`
 	Age         uint   `ffp:"14,3"`
