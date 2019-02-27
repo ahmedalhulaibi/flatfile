@@ -35,10 +35,21 @@ Data type support:
 - [x] Slice, Array support AKA Emulate [COBOL occurs clause](https://www.ibm.com/support/knowledgecenter/en/SS6SG3_4.2.0/com.ibm.entcobol.doc_4.2/PGandLR/tasks/tptbl03.htm)
 
 ## TODO:
+- [ ] Offset feature to support reading long lines of data.
+
+    if record exceeds a maximum buffer size, a partial unmarshal can be done
+    on the next read, the rest of the data can be unmarshalled into the same instance by passing in a position offset
+
 - [ ] Flat File abstraction
 - [ ] Support for conditional unmarshal 
-      if field(pos,len) == "text" do unmarshal else skip
-- [ ] Byte and Rune support using type override. These are aliases for uint8 and int32 respectively. uint8 and int32 are parsed as actual numbers not taking the byte value of the data read in.
+    
+    if field(pos,len) == "text" do unmarshal else skip. 
+    
+    This is useful for flat files where there are multiple record layouts within the same file.
+
+- [ ] Byte and Rune support using type override. 
+
+    These are aliases for uint8 and int32 respectively. uint8 and int32 are currenlt parsed as actual numbers not the byte value of the data read in.
 
 # Usage
 
@@ -106,7 +117,52 @@ type CustomerRecord struct {
 	//The phone numbers start at position 34 (one indexed)
 	//The phone numbers are each number 10 bytes long
 	//There are 2 phone numbers total
+	//For clarity the second phone number will be read in from pos 44 (one indexed)
 	PhoneNumbers []string `ffp:"34,10,2"`
+}
+
+func main() {
+	data := []byte("AMY1900-01-01019123 FAKE STREETCA41611122229053334444")
+
+	fileHeader := &CustomerRecord{}
+	ffparser.Examine(fileHeader)
+
+	err := ffparser.Unmarshal(data, fileHeader, 0)
+	fmt.Printf("%v\n", fileHeader)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+```
+
+
+
+### Example of how to read into an array
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/ahmedalhulaibi/ffparser"
+)
+
+type CustomerRecord struct {
+    //ffparser is one indexed, position starts at 1
+	Name        string `ffp:"1,3"`
+	OpenDate    string `ffp:"4,10"`
+	Age         uint   `ffp:"14,3"`
+	Address     string `ffp:"17,15"`
+	CountryCode string `ffp:"32,2"`
+	//The below tag is in the form "pos,len"
+	//The phone numbers start at position 34 (one indexed)
+	//The phone numbers are each number 10 bytes long
+	//There are 2 phone numbers total
+	//For clarity the second phone number will be read in from pos 44 (one indexed)
+	PhoneNumbers [2]string `ffp:"34,10"`
 }
 
 func main() {
