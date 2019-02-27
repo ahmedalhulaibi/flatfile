@@ -62,7 +62,8 @@ func Unmarshal(data []byte, v interface{}, posOffset uint) error {
 						return fmt.Errorf("ffparser: Failed to parse field tag %s:\n\t%s", fieldTag, tagParseErr)
 					}
 					//extract byte slice from byte data
-					fieldData := data[ffpTag.pos-1 : ffpTag.pos-1+ffpTag.length]
+					pos := ffpTag.pos - 1
+					fieldData := data[pos : pos+ffpTag.length]
 
 					//fmt.Println(fieldType.String(), fieldType.Kind().String())
 
