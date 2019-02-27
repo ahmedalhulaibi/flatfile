@@ -9,9 +9,9 @@ import (
 )
 
 type ffpTagType struct {
-	pos    uint
-	len    uint
-	occurs uint
+	pos    int
+	length int
+	occurs int
 }
 
 /*Unmarshal will read data and convert it into a struct based on a schema/map defined by struct tags
@@ -62,7 +62,7 @@ func Unmarshal(data []byte, v interface{}, posOffset uint) error {
 						return fmt.Errorf("ffparser: Failed to parse field tag %s:\n\t%s", fieldTag, tagParseErr)
 					}
 					//extract byte slice from byte data
-					fieldData := data[ffpTag.pos-1 : ffpTag.pos-1+ffpTag.len]
+					fieldData := data[ffpTag.pos-1 : ffpTag.pos-1+ffpTag.length]
 
 					//fmt.Println(fieldType.String(), fieldType.Kind().String())
 
@@ -102,18 +102,31 @@ func parseFfpTag(fieldTag string, ffpTag *ffpTagType) error {
 		return fmt.Errorf("ffparser: Out of range error. Position parameter cannot be less than 1. Please note position is 1-indexed not zero")
 	}
 
-	ffpTag.pos = uint(pos)
+	ffpTag.pos = pos
 
-	len, lenerr := strconv.Atoi(params[1])
+	length, lenerr := strconv.Atoi(params[1])
 	if lenerr != nil {
 		return fmt.Errorf("ffparser: Error parsing length parameter\n%s", lenerr)
 	}
 
-	if len < 1 {
+	if length < 1 {
 		return fmt.Errorf("ffparser: Out of range error. Length parameter cannot be less than 1")
 	}
 
-	ffpTag.len = uint(len)
+	ffpTag.length = length
+
+	if len(params) > 2 {
+		occurs, occerr := strconv.Atoi(params[2])
+		if occerr != nil {
+			return fmt.Errorf("ffparser: Error parsing occurs parameter\n%s", occerr)
+		}
+
+		if occurs < 2 {
+			return fmt.Errorf("ffparser: Out of range error. Occurs parameter cannot be less than 2")
+		}
+
+		ffpTag.occurs = occurs
+	}
 
 	return nil
 }
@@ -166,11 +179,22 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 	case reflect.Array:
 		for i := 0; i < field.Len(); i++ {
 			//fmt.Println("sl element interface", field.Index(i))
-			lowerBound := uint(i) * ffpTag.len
-			upperBound := lowerBound + ffpTag.len
+			lowerBound := i * ffpTag.length
+			upperBound := lowerBound + ffpTag.length
 			assignBasedOnKind(field.Type().Elem().Kind(), field.Index(i), fieldData[lowerBound:upperBound], ffpTag)
 		}
 	case reflect.Slice:
+		if ffpTag.occurs < 1 {
+			err = fmt.Errorf("ffparser: Occurs clause must be provided when using slice. `ffp:\"pos,len,occurs\"`")
+		}
+		//make slice of length ffpTag.occurs to avoid index out of range err
+		field.Set(reflect.MakeSlice(field.Type(), ffpTag.occurs, ffpTag.occurs))
+		for i := 0; i < ffpTag.occurs; i++ {
+			//fmt.Println("sl element interface", field.Index(i))
+			lowerBound := i * ffpTag.length
+			upperBound := lowerBound + ffpTag.length
+			assignBasedOnKind(field.Type().Elem().Kind(), field.Index(i), fieldData[lowerBound:upperBound], ffpTag)
+		}
 	}
 	return err
 }
