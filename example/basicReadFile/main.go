@@ -9,14 +9,16 @@ import (
 	"github.com/ahmedalhulaibi/ffparser"
 )
 
-type FileHeader struct {
-	LogicalRecordTypeID string `ffp:"1,1"`
-	LogicalRecordCount  uint32 `ffp:"2,9"`
-	NameIdentifier      string `ffp:"11,10"`
+type CustomerRecord struct {
+	Name        string `ffp:"1,3"`
+	OpenDate    string `ffp:"4,10"`
+	Age         uint   `ffp:"14,3"`
+	Address     string `ffp:"17,15"`
+	CountryCode string `ffp:"32,2"`
 }
 
 func main() {
-	file, err := os.Open("./test.txt")
+	file, err := os.Open("./customers.txt")
 	checkError(err)
 	defer file.Close()
 
@@ -28,10 +30,10 @@ func main() {
 		if data == nil {
 			eof = true
 		} else {
-			fileHeader := &FileHeader{}
+			fileHeader := &CustomerRecord{}
 			ffparser.Examine(fileHeader)
 			err := ffparser.Unmarshal(data, fileHeader, 0)
-			fmt.Printf("%#v\n", fileHeader)
+			fmt.Printf("%v\n", fileHeader)
 			checkError(err)
 		}
 	}

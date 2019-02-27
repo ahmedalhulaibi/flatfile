@@ -8,6 +8,12 @@ import (
 	"unsafe"
 )
 
+type ffpTagType struct {
+	pos    int
+	length int
+	occurs int
+}
+
 /*Unmarshal will read data and convert it into a struct based on a schema/map defined by struct tags
 Struct tags are in the form `ffp:"pos,len"`. An offset can be pass to the function when reading long lines of data.
 The offset will be added to pos.
@@ -21,8 +27,9 @@ data: contains the data that will be mapped to struct properties
 v: must be a pointer to a struct
 posOffset:
 */
-func Unmarshal(data []byte, v interface{}, posOffset int) error {
-
+func Unmarshal(data []byte, v interface{}, posOffset uint) error {
+	//init ffpTag for later use
+	ffpTag := &ffpTagType{}
 	if reflect.TypeOf(v).Kind() == reflect.Ptr {
 		//Get underlying type
 		vType := reflect.TypeOf(v).Elem()
@@ -41,22 +48,25 @@ func Unmarshal(data []byte, v interface{}, posOffset int) error {
 				fieldTag, tagFlag := vType.Field(i).Tag.Lookup("ffp")
 				if tagFlag {
 					//split tag by comma to get position and length data
-					params := strings.Split(fieldTag, ",")
-					pos, poserr := strconv.Atoi(params[0])
-					if poserr != nil {
-						fmt.Println(poserr)
+					// params := strings.Split(fieldTag, ",")
+					// pos, poserr := strconv.Atoi(params[0])
+					// if poserr != nil {
+					// 	fmt.Println(poserr)
+					// }
+					// len, lenerr := strconv.Atoi(params[1])
+					// if lenerr != nil {
+					// 	fmt.Println(poserr)
+					// }
+					tagParseErr := parseFfpTag(fieldTag, ffpTag)
+					if tagParseErr != nil {
+						return fmt.Errorf("ffparser: Failed to parse field tag %s:\n\t%s", fieldTag, tagParseErr)
 					}
-					len, lenerr := strconv.Atoi(params[1])
-					if lenerr != nil {
-						fmt.Println(poserr)
-					}
-
 					//extract byte slice from byte data
-					fieldData := data[pos-1 : pos-1+len]
+					fieldData := data[ffpTag.pos-1 : ffpTag.pos-1+ffpTag.length]
 
 					//fmt.Println(fieldType.String(), fieldType.Kind().String())
 
-					err := assignBasedOnKind(fieldType.Kind(), vStruct.Field(i), fieldData)
+					err := assignBasedOnKind(fieldType.Kind(), vStruct.Field(i), fieldData, ffpTag)
 					if err != nil {
 						return fmt.Errorf("ffparser: Failed to marshal.\n%s", err)
 					}
@@ -68,8 +78,61 @@ func Unmarshal(data []byte, v interface{}, posOffset int) error {
 	return fmt.Errorf("ffparser: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
 }
 
+//parseFfpTag parses an ffp struct tag on a field
+//Tags are expected to be in the form:
+// pos,len,occurs
+// where pos is an int > 0
+//		 len is an int
+func parseFfpTag(fieldTag string, ffpTag *ffpTagType) error {
+
+	//split tag by comma to get position and length data
+	params := strings.Split(fieldTag, ",")
+	//position and length parameters must be provided
+	//
+	if len(params) < 2 {
+		return fmt.Errorf("ffparser: Not enough ffp tag params provided.\nPosition and length parameters must be provided.\nMust be in form `ffp:\"pos,len\"`")
+	}
+
+	pos, poserr := strconv.Atoi(params[0])
+	if poserr != nil {
+		return fmt.Errorf("ffparser: Error parsing position parameter\n%s", poserr)
+	}
+
+	if pos < 1 {
+		return fmt.Errorf("ffparser: Out of range error. Position parameter cannot be less than 1. Please note position is 1-indexed not zero")
+	}
+
+	ffpTag.pos = pos
+
+	length, lenerr := strconv.Atoi(params[1])
+	if lenerr != nil {
+		return fmt.Errorf("ffparser: Error parsing length parameter\n%s", lenerr)
+	}
+
+	if length < 1 {
+		return fmt.Errorf("ffparser: Out of range error. Length parameter cannot be less than 1")
+	}
+
+	ffpTag.length = length
+
+	if len(params) > 2 {
+		occurs, occerr := strconv.Atoi(params[2])
+		if occerr != nil {
+			return fmt.Errorf("ffparser: Error parsing occurs parameter\n%s", occerr)
+		}
+
+		if occurs < 2 {
+			return fmt.Errorf("ffparser: Out of range error. Occurs parameter cannot be less than 2")
+		}
+
+		ffpTag.occurs = occurs
+	}
+
+	return nil
+}
+
 //assignBasedOnKind performs assignment of fieldData to field based on kind
-func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
+func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte, ffpTag *ffpTagType) error {
 	var err error
 	err = nil
 	switch kind {
@@ -110,20 +173,27 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte)
 			err = Unmarshal(fieldData, field.Interface(), 0)
 		} else {
 			fmt.Println(field.Elem())
-			err = assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:])
+			err = assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:], ffpTag)
 			fmt.Println(field.Elem())
 		}
-	//Slice, Array assignment is a WIP. Consider this not implemented
-	case reflect.Slice, reflect.Array:
-		//get underlying type, if struct then skip
-		if field.Type().Elem().Kind() != reflect.Struct {
-			// fmt.Println("SLICE or ARRAY found", field.Type().Elem().Kind())
-			// fmt.Println(reflect.ValueOf(field))
-			// fmt.Println(field.Index(0))
-			for i := 0; i < field.Len(); i++ {
-				//fmt.Println("sl element interface", field.Index(i))
-				assignBasedOnKind(field.Type().Elem().Kind(), field.Index(i), fieldData[i:i+1])
-			}
+	case reflect.Array:
+		for i := 0; i < field.Len(); i++ {
+			//fmt.Println("sl element interface", field.Index(i))
+			lowerBound := i * ffpTag.length
+			upperBound := lowerBound + ffpTag.length
+			assignBasedOnKind(field.Type().Elem().Kind(), field.Index(i), fieldData[lowerBound:upperBound], ffpTag)
+		}
+	case reflect.Slice:
+		if ffpTag.occurs < 1 {
+			err = fmt.Errorf("ffparser: Occurs clause must be provided when using slice. `ffp:\"pos,len,occurs\"`")
+		}
+		//make slice of length ffpTag.occurs to avoid index out of range err
+		field.Set(reflect.MakeSlice(field.Type(), ffpTag.occurs, ffpTag.occurs))
+		for i := 0; i < ffpTag.occurs; i++ {
+			//fmt.Println("sl element interface", field.Index(i))
+			lowerBound := i * ffpTag.length
+			upperBound := lowerBound + ffpTag.length
+			assignBasedOnKind(field.Type().Elem().Kind(), field.Index(i), fieldData[lowerBound:upperBound], ffpTag)
 		}
 	}
 	return err

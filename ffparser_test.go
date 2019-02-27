@@ -643,3 +643,218 @@ func TestFloat64OutOfRangeErr(t *testing.T) {
 	t.Log(testVal)
 	t.Log(err)
 }
+
+func TestFfpTagParsePosSyntaxErr(t *testing.T) {
+	type FfpTest struct {
+		TestVal string `ffp:"asdf,1"`
+	}
+
+	testVal := &FfpTest{}
+	data := []byte("2.7976931348623157e+308")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return syntax error when failing to parse position param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFfpTagParseLenSyntaxErr(t *testing.T) {
+	type FfpTest struct {
+		TestVal string `ffp:"1,asdf"`
+	}
+
+	testVal := &FfpTest{}
+	data := []byte("2.7976931348623157e+308")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return syntax error when failing to parse length param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFfpTagParsePosRangeErr(t *testing.T) {
+	type FfpTest struct {
+		TestVal string `ffp:"-1,10"`
+	}
+
+	testVal := &FfpTest{}
+	data := []byte("2.7976931348623157e+308")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return out of range error when failing to parse position param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFfpTagParseLenRangeErr(t *testing.T) {
+	type FfpTest struct {
+		TestVal string `ffp:"1,-1"`
+	}
+
+	testVal := &FfpTest{}
+	data := []byte("2.7976931348623157e+308")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return out of range error when failing to parse length param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFfpTagParseMissingParamErr(t *testing.T) {
+	type FfpTest struct {
+		TestVal string `ffp:""`
+	}
+
+	testVal := &FfpTest{}
+	data := []byte("2.7976931348623157e+308")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err == nil {
+		t.Error("Unmarshal should return missing parameter error")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestArrayParse(t *testing.T) {
+	type FfpTest struct {
+		TestVal [4]int     `ffp:"1,2"`
+		Names   [10]string `ffp:"9,3"`
+	}
+
+	testVal := &FfpTest{}
+	expectedVal := [4]int{11, 22, 33, 44}
+
+	expectedNames := [10]string{"AMY", "BOB", "CAM", "DAN", "EDD", "FAE", "GUY", "HIM", "IGG", "JAY"}
+
+	data := []byte("11223344AMYBOBCAMDANEDDFAEGUYHIMIGGJAY")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	if testVal.TestVal != expectedVal {
+		t.Error("Unexpected results.")
+		t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedVal, testVal.TestVal)
+		t.Fail()
+	}
+
+	if testVal.Names != expectedNames {
+		t.Error("Unexpected results.")
+		t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedNames, testVal.Names)
+		t.Fail()
+
+	}
+}
+
+func TestArrayNestedStructParse(t *testing.T) {
+	type Name struct {
+		NameData string `ffp:"1,3"`
+	}
+	type FfpTest struct {
+		Names [3]Name `ffp:"1,3"`
+	}
+
+	testVal := &FfpTest{}
+
+	expectedNames := [3]Name{Name{NameData: "AMY"}, Name{NameData: "BOB"}, Name{NameData: "CAM"}}
+
+	data := []byte("AMYBOBCAM")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	if testVal.Names != expectedNames {
+		t.Error("Unexpected results.")
+		t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedNames, testVal.Names)
+		t.Fail()
+
+	}
+}
+
+func TestSliceParse(t *testing.T) {
+	type FfpTest struct {
+		TestVal []int    `ffp:"1,2,4"`
+		Names   []string `ffp:"9,3,10"`
+	}
+
+	testVal := &FfpTest{}
+	expectedVal := []int{11, 22, 33, 44}
+
+	expectedNames := []string{"AMY", "BOB", "CAM", "DAN", "EDD", "FAE", "GUY", "HIM", "IGG", "JAY"}
+
+	data := []byte("11223344AMYBOBCAMDANEDDFAEGUYHIMIGGJAY")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	for i := 0; i < len(testVal.TestVal); i++ {
+		if testVal.TestVal[i] != expectedVal[i] {
+			t.Error("Unexpected results.")
+			t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedVal, testVal.TestVal)
+			t.Fail()
+		}
+	}
+
+	for i := 0; i < len(testVal.Names); i++ {
+		if testVal.Names[i] != expectedNames[i] {
+			t.Error("Unexpected results.")
+			t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedNames, testVal.Names)
+			t.Fail()
+		}
+	}
+}
+
+func TestSliceNestedStructParse(t *testing.T) {
+	type Name struct {
+		NameData string `ffp:"1,3"`
+	}
+	type FfpTest struct {
+		Names []Name `ffp:"1,3,3"`
+	}
+
+	testVal := &FfpTest{}
+
+	expectedNames := [3]Name{Name{NameData: "AMY"}, Name{NameData: "BOB"}, Name{NameData: "CAM"}}
+
+	data := []byte("AMYBOBCAM")
+
+	err := Unmarshal(data, testVal, 0)
+
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	for i := 0; i < len(testVal.Names); i++ {
+		if testVal.Names[i] != expectedNames[i] {
+			t.Error("Unexpected results.")
+			t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedNames, testVal.Names)
+			t.Fail()
+		}
+	}
+}
