@@ -858,3 +858,32 @@ func TestSliceNestedStructParse(t *testing.T) {
 		}
 	}
 }
+
+func TestOffsetParse(t *testing.T) {
+	type Name struct {
+		NameData     string `ffp:"1,3"`
+		Age          int    `ffp:"4,3"`
+		CurrencyPref string `ffp:"7,3"`
+	}
+
+	testVal := &Name{}
+
+	expectedName := &Name{NameData: "AMY", Age: int(123), CurrencyPref: "CAD"}
+
+	data := [][]byte{[]byte("AMY"), []byte("123"), []byte("CAD")}
+
+	for idx, dataval := range data {
+		err := Unmarshal(dataval, testVal, idx*3)
+		t.Log(testVal)
+		if err != nil {
+			t.Log(err)
+			t.Fail()
+		}
+	}
+
+	if testVal.NameData != expectedName.NameData || testVal.Age != expectedName.Age || testVal.CurrencyPref != expectedName.CurrencyPref {
+		t.Error("Unexpected results.")
+		t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedName, testVal)
+		t.Fail()
+	}
+}

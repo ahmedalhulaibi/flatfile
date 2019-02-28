@@ -27,7 +27,7 @@ data: contains the data that will be mapped to struct properties
 v: must be a pointer to a struct
 posOffset:
 */
-func Unmarshal(data []byte, v interface{}, posOffset uint) error {
+func Unmarshal(data []byte, v interface{}, posOffset int) error {
 	//init ffpTag for later use
 	ffpTag := &ffpTagType{}
 	if reflect.TypeOf(v).Kind() == reflect.Ptr {
@@ -47,29 +47,26 @@ func Unmarshal(data []byte, v interface{}, posOffset uint) error {
 
 				fieldTag, tagFlag := vType.Field(i).Tag.Lookup("ffp")
 				if tagFlag {
-					//split tag by comma to get position and length data
-					// params := strings.Split(fieldTag, ",")
-					// pos, poserr := strconv.Atoi(params[0])
-					// if poserr != nil {
-					// 	fmt.Println(poserr)
-					// }
-					// len, lenerr := strconv.Atoi(params[1])
-					// if lenerr != nil {
-					// 	fmt.Println(poserr)
-					// }
+
 					tagParseErr := parseFfpTag(fieldTag, ffpTag)
 					if tagParseErr != nil {
 						return fmt.Errorf("ffparser: Failed to parse field tag %s:\n\t%s", fieldTag, tagParseErr)
 					}
-					//extract byte slice from byte data
-					pos := ffpTag.pos - 1
-					fieldData := data[pos : pos+ffpTag.length]
 
-					//fmt.Println(fieldType.String(), fieldType.Kind().String())
+					//determine if the current field is in range of the posOffset passed
+					if ffpTag.pos > posOffset {
+						//extract byte slice from byte data
+						lowerBound := ffpTag.pos - 1 - posOffset
+						upperBound := lowerBound + ffpTag.length
+						//and check that pos does not exceed length of bytes to prevent attempting to parse nulls
+						if lowerBound < len(data) {
+							fieldData := data[lowerBound:upperBound]
 
-					err := assignBasedOnKind(fieldType.Kind(), vStruct.Field(i), fieldData, ffpTag)
-					if err != nil {
-						return fmt.Errorf("ffparser: Failed to marshal.\n%s", err)
+							err := assignBasedOnKind(fieldType.Kind(), vStruct.Field(i), fieldData, ffpTag)
+							if err != nil {
+								return fmt.Errorf("ffparser: Failed to marshal.\n%s", err)
+							}
+						}
 					}
 				}
 			}
@@ -173,9 +170,7 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 			//Unmarshal struct
 			err = Unmarshal(fieldData, field.Interface(), 0)
 		} else {
-			fmt.Println(field.Elem())
 			err = assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:], ffpTag)
-			fmt.Println(field.Elem())
 		}
 	case reflect.Array:
 		for i := 0; i < field.Len(); i++ {
