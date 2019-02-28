@@ -165,12 +165,13 @@ func main() {
 
 - [x] Slice, Array support AKA Emulate [COBOL occurs clause](https://www.ibm.com/support/knowledgecenter/en/SS6SG3_4.2.0/com.ibm.entcobol.doc_4.2/PGandLR/tasks/tptbl03.htm)
 
-## TODO:
-- [ ] Offset feature to support reading long lines of data.
+- [x] Offset feature to support reading long lines of data.
 
     if record exceeds a maximum buffer size, a partial unmarshal can be done
-    on the next read, the rest of the data can be unmarshalled into the same instance by passing in a position offset
+    on the next read, the rest of the data can be unmarshalled into the same struct 
+	instance by passing in a position offset
 
+## TODO:
 - [ ] Flat File abstraction
 - [ ] Support for conditional unmarshal 
     
