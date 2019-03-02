@@ -14,20 +14,24 @@ type ffpTagType struct {
 	occurs int
 }
 
-/*Unmarshal will read data and convert it into a struct based on a schema/map defined by struct tags
-Struct tags are in the form `ffp:"pos,len"`. An offset can be pass to the function when reading long lines of data.
-The offset will be added to pos.
-Example:
-type FileHeader struct {
-	LogicalRecordTypeID byte   `ffp:"1,1"`
-	LogicalRecordCount  uint32 `ffp:"2,9"`
-	OriginatorID        string `ffp:"11,10"`
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
-data: contains the data that will be mapped to struct properties
-v: must be a pointer to a struct
-startFieldIdx: 1-indexed value for which struct field to start marshaling from.
+
+/*Unmarshal will read data and convert it into a struct based on a schema/map defined by struct tags
+
+Struct tags are in the form `ffp:"pos,len"`. pos and len should be integers > 0
+
+startFieldIdx: index can be passed to indicate which struct field to start the unmarshal
+If startFieldIdx == 0 then Unmarshal will attempt to marshal all fields with an ffp tag
+
+numFieldsToMarshal: can be passed to indicate how many fields to unmarshal starting from startFieldIdx
+
 */
-func Unmarshal(data []byte, v interface{}, startFieldIdx int) error {
+func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal int) error {
 	posOffset := 0
 	//init ffpTag for later use
 	ffpTag := &ffpTagType{}
@@ -39,13 +43,17 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int) error {
 		if vType.Kind() == reflect.Struct {
 			//Dereference pointer to struct
 			vStruct := reflect.ValueOf(v).Elem()
-
+			maxField := 0
+			if numFieldsToMarshal > 0 {
+				maxField = min(startFieldIdx+numFieldsToMarshal, vStruct.NumField())
+			} else {
+				maxField = vStruct.NumField()
+			}
 			//Loop through struct fields/properties
-			for i := startFieldIdx; i < vStruct.NumField(); i++ {
+			for i := startFieldIdx; i < maxField; i++ {
 
 				//Get underlying type of field
 				fieldType := vStruct.Field(i).Type()
-
 				fieldTag, tagFlag := vType.Field(i).Tag.Lookup("ffp")
 				if tagFlag {
 
@@ -99,11 +107,12 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int) error {
 //		FullName  string `ffp:"1,20"`
 //		Random    string `ffp:"7,9"`
 //}
-//This function will have to be redesigned to handle multiple scenarios of overlapping fields
-func CalcNumFieldsToMarshal(data []byte, v interface{}, posOffset int) (int, error) {
+//This function would have to be redesigned to handle multiple scenarios of overlapping fields
+func CalcNumFieldsToMarshal(data []byte, v interface{}, fieldOffset int) (int, []byte, error) {
 	ffpTag := &ffpTagType{}
 	dataLen := len(data)
 	numFieldsToMarshal := 0
+	remainder := []byte("")
 	cumulativeRecLength := 0
 	if reflect.TypeOf(v).Kind() == reflect.Ptr {
 		//Get underlying type
@@ -115,7 +124,7 @@ func CalcNumFieldsToMarshal(data []byte, v interface{}, posOffset int) (int, err
 			vStruct := reflect.ValueOf(v).Elem()
 
 			//Loop through struct fields/properties
-			for i := 0; i < vStruct.NumField(); i++ {
+			for i := fieldOffset; i < vStruct.NumField(); i++ {
 
 				//Get underlying type of field
 				fieldType := vStruct.Field(i).Type()
@@ -125,7 +134,7 @@ func CalcNumFieldsToMarshal(data []byte, v interface{}, posOffset int) (int, err
 
 					tagParseErr := parseFfpTag(fieldTag, ffpTag)
 					if tagParseErr != nil {
-						return 0, fmt.Errorf("ffparser: Failed to parse field tag %s:\n\t%s", fieldTag, tagParseErr)
+						return 0, []byte(""), fmt.Errorf("ffparser: Failed to parse field tag %s:\n\t%s", fieldTag, tagParseErr)
 					}
 
 					if ffpTag.occurs > 0 {
@@ -139,14 +148,15 @@ func CalcNumFieldsToMarshal(data []byte, v interface{}, posOffset int) (int, err
 					if cumulativeRecLength <= dataLen {
 						numFieldsToMarshal++
 					} else {
+						remainder = data[(cumulativeRecLength - ffpTag.length):]
 						break
 					}
 				}
 			}
 		}
-		return numFieldsToMarshal, nil
+		return numFieldsToMarshal, remainder, nil
 	}
-	return 0, fmt.Errorf("ffparser: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
+	return 0, []byte(""), fmt.Errorf("ffparser: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
 }
 
 //parseFfpTag parses an ffp struct tag on a field
@@ -236,12 +246,12 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 	case reflect.String:
 		field.Set(reflect.ValueOf(string(fieldData)))
 	case reflect.Struct:
-		err = Unmarshal(fieldData, field.Addr().Interface(), 0)
+		err = Unmarshal(fieldData, field.Addr().Interface(), 0, 0)
 	case reflect.Ptr:
 		//If pointer to struct
 		if field.Elem().Kind() == reflect.Struct {
 			//Unmarshal struct
-			err = Unmarshal(fieldData, field.Interface(), 0)
+			err = Unmarshal(fieldData, field.Interface(), 0, 0)
 		} else {
 			err = assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:], ffpTag)
 		}

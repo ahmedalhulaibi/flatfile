@@ -9,6 +9,9 @@ import (
 	"github.com/ahmedalhulaibi/ffparser"
 )
 
+// To run this example:
+// go run main.go
+
 type CustomerRecord struct {
 	//ffparser is one indexed, position starts at 1
 	Name        string `ffp:"1,3"`
@@ -33,7 +36,7 @@ func main() {
 		} else {
 			fileHeader := &CustomerRecord{}
 			ffparser.Examine(fileHeader)
-			err := ffparser.Unmarshal(data, fileHeader, 0)
+			err := ffparser.Unmarshal(data, fileHeader, 0, 0)
 			fmt.Printf("%v\n", fileHeader)
 			checkError(err)
 		}

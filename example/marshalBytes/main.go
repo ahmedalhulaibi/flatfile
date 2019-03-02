@@ -18,11 +18,11 @@ type CustomerRecord struct {
 func main() {
 	data := []byte("AMY1900-01-01019123 FAKE STREETCA")
 
-	fileHeader := &CustomerRecord{}
-	ffparser.Examine(fileHeader)
+	fileRecord := &CustomerRecord{}
+	ffparser.Examine(fileRecord)
 
-	err := ffparser.Unmarshal(data, fileHeader, 0)
-	fmt.Printf("%v\n", fileHeader)
+	err := ffparser.Unmarshal(data, fileRecord, 0, 0)
+	fmt.Printf("%v\n", fileRecord)
 
 	if err != nil {
 		fmt.Println(err)

@@ -1,6 +1,8 @@
 package ffparser
 
 import (
+	"bytes"
+	"fmt"
 	"math"
 	"reflect"
 	"testing"
@@ -30,7 +32,7 @@ func TestBoolFalse(t *testing.T) {
 	testVal := &BoolStruct{}
 	data := []byte("0fFfalseFalseFALSE")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -58,7 +60,7 @@ func TestBoolTrue(t *testing.T) {
 	testVal := &BoolStruct{}
 	data := []byte("1tTtrueTrueTRUE")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -86,7 +88,7 @@ func TestBoolErr(t *testing.T) {
 	testVal := &BoolStruct{}
 	data := []byte("3aBerrrErrrERRR")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse bool")
@@ -103,7 +105,7 @@ func TestUint8(t *testing.T) {
 	testVal := &Uint8Struct{}
 	data := []byte("1255")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -123,7 +125,7 @@ func TestUint8InvalidSyntaxErr(t *testing.T) {
 	testVal := &Uint8Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint8")
@@ -140,7 +142,7 @@ func TestUint8OutOfRangeErr(t *testing.T) {
 	testVal := &Uint8Struct{}
 	data := []byte("2555")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint8")
@@ -158,7 +160,7 @@ func TestUint16(t *testing.T) {
 	testVal := &Uint16Struct{}
 	data := []byte("165535")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -178,7 +180,7 @@ func TestUint16InvalidSyntaxErr(t *testing.T) {
 	testVal := &Uint16Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint16")
@@ -195,7 +197,7 @@ func TestUint16OutOfRangeErr(t *testing.T) {
 	testVal := &Uint16Struct{}
 	data := []byte("99999")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint16")
@@ -213,7 +215,7 @@ func TestUint32(t *testing.T) {
 	testVal := &Uint32Struct{}
 	data := []byte("14294967295")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -233,7 +235,7 @@ func TestUint32InvalidSyntaxErr(t *testing.T) {
 	testVal := &Uint32Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint32")
@@ -250,7 +252,7 @@ func TestUint32OutOfRangeErr(t *testing.T) {
 	testVal := &Uint32Struct{}
 	data := []byte("9999999999")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint32")
@@ -268,7 +270,7 @@ func TestUint64(t *testing.T) {
 	testVal := &Uint64Struct{}
 	data := []byte("118446744073709551615")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -288,7 +290,7 @@ func TestUint64InvalidSyntaxErr(t *testing.T) {
 	testVal := &Uint64Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint64")
@@ -305,7 +307,7 @@ func TestUint64OutOfRangeErr(t *testing.T) {
 	testVal := &Uint64Struct{}
 	data := []byte("99999999999999999999")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint64")
@@ -323,7 +325,7 @@ func TestInt8(t *testing.T) {
 	testVal := &Int8Struct{}
 	data := []byte("-128127")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -343,7 +345,7 @@ func TestInt8InvalidSyntaxErr(t *testing.T) {
 	testVal := &Int8Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int8")
@@ -360,7 +362,7 @@ func TestInt8OutOfRangeErr(t *testing.T) {
 	testVal := &Int8Struct{}
 	data := []byte("2555")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int8")
@@ -378,7 +380,7 @@ func TestInt16(t *testing.T) {
 	testVal := &Int16Struct{}
 	data := []byte("-3276832767")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -398,7 +400,7 @@ func TestInt16InvalidSyntaxErr(t *testing.T) {
 	testVal := &Int16Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int16")
@@ -415,7 +417,7 @@ func TestInt16OutOfRangeErr(t *testing.T) {
 	testVal := &Int16Struct{}
 	data := []byte("99999")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int16")
@@ -433,7 +435,7 @@ func TestInt32(t *testing.T) {
 	testVal := &Int32Struct{}
 	data := []byte("-21474836482147483647")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -453,7 +455,7 @@ func TestInt32InvalidSyntaxErr(t *testing.T) {
 	testVal := &Int32Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int32")
@@ -470,7 +472,7 @@ func TestInt32OutOfRangeErr(t *testing.T) {
 	testVal := &Int32Struct{}
 	data := []byte("9999999999")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int32")
@@ -488,7 +490,7 @@ func TestInt64(t *testing.T) {
 	testVal := &Int64Struct{}
 	data := []byte("-92233720368547758089223372036854775807")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -508,7 +510,7 @@ func TestInt64InvalidSyntaxErr(t *testing.T) {
 	testVal := &Int64Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int64")
@@ -525,7 +527,7 @@ func TestInt64OutOfRangeErr(t *testing.T) {
 	testVal := &Int64Struct{}
 	data := []byte("9999999999999999999")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int64")
@@ -543,7 +545,7 @@ func TestFloat32(t *testing.T) {
 	testVal := &Float32Struct{}
 	data := []byte("3.4028234663852886e+381.401298464324817e-45")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -563,7 +565,7 @@ func TestFloat32InvalidSyntaxErr(t *testing.T) {
 	testVal := &Float32Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse Float32")
@@ -580,7 +582,7 @@ func TestFloat32OutOfRangeErr(t *testing.T) {
 	testVal := &Float32Struct{}
 	data := []byte("9999999999999999999999999999999999999999")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse Float32")
@@ -598,7 +600,7 @@ func TestFloat64(t *testing.T) {
 	testVal := &Float64Struct{}
 	data := []byte("1.7976931348623157e+3085e-324")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Error(err)
@@ -618,7 +620,7 @@ func TestFloat64InvalidSyntaxErr(t *testing.T) {
 	testVal := &Float64Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse Float64")
@@ -635,7 +637,7 @@ func TestFloat64OutOfRangeErr(t *testing.T) {
 	testVal := &Float64Struct{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse Float64")
@@ -652,7 +654,7 @@ func TestFfpTagParsePosSyntaxErr(t *testing.T) {
 	testVal := &FfpTest{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return syntax error when failing to parse position param")
@@ -669,7 +671,7 @@ func TestFfpTagParseLenSyntaxErr(t *testing.T) {
 	testVal := &FfpTest{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return syntax error when failing to parse length param")
@@ -686,7 +688,7 @@ func TestFfpTagParsePosRangeErr(t *testing.T) {
 	testVal := &FfpTest{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return out of range error when failing to parse position param")
@@ -703,7 +705,7 @@ func TestFfpTagParseLenRangeErr(t *testing.T) {
 	testVal := &FfpTest{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return out of range error when failing to parse length param")
@@ -720,7 +722,7 @@ func TestFfpTagParseMissingParamErr(t *testing.T) {
 	testVal := &FfpTest{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err == nil {
 		t.Error("Unmarshal should return missing parameter error")
@@ -742,7 +744,7 @@ func TestArrayParse(t *testing.T) {
 
 	data := []byte("11223344AMYBOBCAMDANEDDFAEGUYHIMIGGJAY")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Log(err)
@@ -777,7 +779,7 @@ func TestArrayNestedStructParse(t *testing.T) {
 
 	data := []byte("AMYBOBCAM")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Log(err)
@@ -805,7 +807,7 @@ func TestSliceParse(t *testing.T) {
 
 	data := []byte("11223344AMYBOBCAMDANEDDFAEGUYHIMIGGJAY")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Log(err)
@@ -843,7 +845,7 @@ func TestSliceNestedStructParse(t *testing.T) {
 
 	data := []byte("AMYBOBCAM")
 
-	err := Unmarshal(data, testVal, 0)
+	err := Unmarshal(data, testVal, 0, 0)
 
 	if err != nil {
 		t.Log(err)
@@ -873,7 +875,7 @@ func TestOffsetParse(t *testing.T) {
 	data := [][]byte{[]byte("AMY"), []byte("123"), []byte("CAD")}
 
 	for idx, dataval := range data {
-		err := Unmarshal(dataval, testVal, idx)
+		err := Unmarshal(dataval, testVal, idx, 0)
 		t.Log(testVal)
 		if err != nil {
 			t.Log(err)
@@ -890,8 +892,65 @@ func TestOffsetParse(t *testing.T) {
 
 func TestCalcNumFieldsToMarshal(t *testing.T) {
 	type Profile struct {
-		NameData string `ffp:"1,1"`
-		Age		 int	`ffp:"10,1"`
-		
+		NameData string `ffp:"1,9"`
+		Age      int    `ffp:"10,2"`
+	}
+
+	var tests = []struct {
+		MyProfile   *Profile
+		Record      []byte
+		IndexOffset int
+		Want        int
+	}{
+		{&Profile{}, []byte("1234567891"), 0, 1},
+		{&Profile{}, []byte("12345678910"), 0, 2},
+		{&Profile{}, []byte("1234567"), 0, 0},
+		{&Profile{}, []byte("1"), 1, 0},
+		{&Profile{}, []byte("12"), 1, 1},
+	}
+
+	for idx, tt := range tests {
+		testName := fmt.Sprintf("CalcNumFieldsToMarshal-%d", idx)
+		t.Run(testName, func(t *testing.T) {
+			got, _, err := CalcNumFieldsToMarshal(tt.Record, tt.MyProfile, tt.IndexOffset)
+			if err != nil {
+				t.Errorf("CalcNumFieldsToMarshal(%v,%v,%d) got: %d want: %d err: %s", tt.Record, tt.MyProfile, tt.IndexOffset, got, tt.Want, err)
+			}
+			if got != tt.Want {
+				t.Errorf("CalcNumFieldsToMarshal(%v,%v,%d) got: %d want: %d", tt.Record, tt.MyProfile, tt.IndexOffset, got, tt.Want)
+			}
+		})
+	}
+}
+func TestCalcNumFieldsToMarshalRemainder(t *testing.T) {
+	type Profile struct {
+		NameData string `ffp:"1,9"`
+		Age      int    `ffp:"10,2"`
+	}
+
+	var tests = []struct {
+		MyProfile   *Profile
+		Record      []byte
+		IndexOffset int
+		Want        []byte
+	}{
+		{&Profile{}, []byte("1234567891"), 0, []byte("1")},
+		{&Profile{}, []byte("12345678910"), 0, []byte("")},
+		{&Profile{}, []byte("1234567"), 0, []byte("1234567")},
+		{&Profile{}, []byte("1"), 1, []byte("1")},
+		{&Profile{}, []byte("12"), 1, []byte("")},
+	}
+
+	for idx, tt := range tests {
+		testName := fmt.Sprintf("CalcNumFieldsToMarshalRemainder-%d", idx)
+		t.Run(testName, func(t *testing.T) {
+			_, got, err := CalcNumFieldsToMarshal(tt.Record, tt.MyProfile, tt.IndexOffset)
+			if err != nil {
+				t.Errorf("err: %s", err)
+			}
+			if !bytes.Equal(got, tt.Want) {
+				t.Errorf("CalcNumFieldsToMarshalRemainder(%s,%v,%d) got: %s want: %s", string(tt.Record), tt.MyProfile, tt.IndexOffset, string(got), string(tt.Want))
+			}
+		})
 	}
 }

@@ -27,7 +27,7 @@ func main() {
 	fileHeader := &CustomerRecord{}
 	ffparser.Examine(fileHeader)
 
-	err := ffparser.Unmarshal(data, fileHeader, 0)
+	err := ffparser.Unmarshal(data, fileHeader, 0, 0)
 	fmt.Printf("%v\n", fileHeader)
 
 	if err != nil {
