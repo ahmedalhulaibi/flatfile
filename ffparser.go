@@ -25,9 +25,10 @@ type FileHeader struct {
 }
 data: contains the data that will be mapped to struct properties
 v: must be a pointer to a struct
-posOffset:
+startFieldIdx: 1-indexed value for which struct field to start marshaling from.
 */
-func Unmarshal(data []byte, v interface{}, posOffset int) error {
+func Unmarshal(data []byte, v interface{}, startFieldIdx int) error {
+	posOffset := 0
 	//init ffpTag for later use
 	ffpTag := &ffpTagType{}
 	if reflect.TypeOf(v).Kind() == reflect.Ptr {
@@ -40,7 +41,7 @@ func Unmarshal(data []byte, v interface{}, posOffset int) error {
 			vStruct := reflect.ValueOf(v).Elem()
 
 			//Loop through struct fields/properties
-			for i := 0; i < vStruct.NumField(); i++ {
+			for i := startFieldIdx; i < vStruct.NumField(); i++ {
 
 				//Get underlying type of field
 				fieldType := vStruct.Field(i).Type()
@@ -51,6 +52,10 @@ func Unmarshal(data []byte, v interface{}, posOffset int) error {
 					tagParseErr := parseFfpTag(fieldTag, ffpTag)
 					if tagParseErr != nil {
 						return fmt.Errorf("ffparser: Failed to parse field tag %s:\n\t%s", fieldTag, tagParseErr)
+					}
+					//determine pos offset based on start index in case start index not 1
+					if i == startFieldIdx {
+						posOffset = ffpTag.pos - 1
 					}
 
 					//determine if the current field is in range of the posOffset passed
@@ -74,6 +79,74 @@ func Unmarshal(data []byte, v interface{}, posOffset int) error {
 		return nil
 	}
 	return fmt.Errorf("ffparser: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
+}
+
+//CalcNumFieldsToMarshal determines how many fields can be marshalled successfully
+//This currently will not return an accurate result for overlapping fields
+//For example:
+//type Profile struct {
+//		FirstName string `ffp:"1,10"`
+//		LastName  string `ffp:"11,10"`
+//		FullName  string `ffp:"1,20"`
+//}
+//Expected output is that 3 fields can be marshalled successfully
+//The result will be 2
+//Another example:
+//type Profile struct
+//type Profile struct {
+//		FirstName string `ffp:"1,10"`
+//		LastName  string `ffp:"11,10"`
+//		FullName  string `ffp:"1,20"`
+//		Random    string `ffp:"7,9"`
+//}
+//This function will have to be redesigned to handle multiple scenarios of overlapping fields
+func CalcNumFieldsToMarshal(data []byte, v interface{}, posOffset int) (int, error) {
+	ffpTag := &ffpTagType{}
+	dataLen := len(data)
+	numFieldsToMarshal := 0
+	cumulativeRecLength := 0
+	if reflect.TypeOf(v).Kind() == reflect.Ptr {
+		//Get underlying type
+		vType := reflect.TypeOf(v).Elem()
+
+		//Only process if kind is Struct
+		if vType.Kind() == reflect.Struct {
+			//Dereference pointer to struct
+			vStruct := reflect.ValueOf(v).Elem()
+
+			//Loop through struct fields/properties
+			for i := 0; i < vStruct.NumField(); i++ {
+
+				//Get underlying type of field
+				fieldType := vStruct.Field(i).Type()
+
+				fieldTag, tagFlag := vType.Field(i).Tag.Lookup("ffp")
+				if tagFlag {
+
+					tagParseErr := parseFfpTag(fieldTag, ffpTag)
+					if tagParseErr != nil {
+						return 0, fmt.Errorf("ffparser: Failed to parse field tag %s:\n\t%s", fieldTag, tagParseErr)
+					}
+
+					if ffpTag.occurs > 0 {
+						cumulativeRecLength += ffpTag.length * ffpTag.occurs
+					} else if fieldType.Kind() == reflect.Array {
+						cumulativeRecLength += ffpTag.length * vStruct.Field(i).Len()
+					} else {
+						cumulativeRecLength += ffpTag.length
+					}
+
+					if cumulativeRecLength <= dataLen {
+						numFieldsToMarshal++
+					} else {
+						break
+					}
+				}
+			}
+		}
+		return numFieldsToMarshal, nil
+	}
+	return 0, fmt.Errorf("ffparser: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
 }
 
 //parseFfpTag parses an ffp struct tag on a field

@@ -873,7 +873,7 @@ func TestOffsetParse(t *testing.T) {
 	data := [][]byte{[]byte("AMY"), []byte("123"), []byte("CAD")}
 
 	for idx, dataval := range data {
-		err := Unmarshal(dataval, testVal, idx*3)
+		err := Unmarshal(dataval, testVal, idx)
 		t.Log(testVal)
 		if err != nil {
 			t.Log(err)
@@ -885,5 +885,13 @@ func TestOffsetParse(t *testing.T) {
 		t.Error("Unexpected results.")
 		t.Errorf("Unexpected results.\nExpected:%v\nResult:%v\n", expectedName, testVal)
 		t.Fail()
+	}
+}
+
+func TestCalcNumFieldsToMarshal(t *testing.T) {
+	type Profile struct {
+		NameData string `ffp:"1,1"`
+		Age		 int	`ffp:"10,1"`
+		
 	}
 }

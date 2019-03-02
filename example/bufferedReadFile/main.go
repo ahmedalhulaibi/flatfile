@@ -23,6 +23,7 @@ func main() {
 	checkError(err)
 	defer file.Close()
 
+	//Creare buffered reader with small buffer size to simulate reading long lines of data that exceed a buffer limit
 	reader := bufio.NewReaderSize(file, 1*1)
 
 	endOfFile := false
@@ -31,6 +32,9 @@ func main() {
 	for !endOfFile {
 		data, isPrefix, eof := readLine(reader)
 		endOfFile = eof
+		//To read in the data and marshal using ffparser, there are 2 options
+		// 1. Append the data read in into a slice until you read the end of the line/record
+		//    Then marshal into struct
 		dataBuffer = append(dataBuffer, data...)
 		if !endOfFile {
 			if !isPrefix {
@@ -43,6 +47,7 @@ func main() {
 			}
 			fmt.Println(string(dataBuffer))
 		}
+		// 2. Marshal using the data we have as we read
 	}
 	checkError(err)
 }
