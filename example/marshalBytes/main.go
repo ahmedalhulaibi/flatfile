@@ -21,6 +21,7 @@ func main() {
 	fileRecord := &CustomerRecord{}
 	ffparser.Examine(fileRecord)
 
+	//unmarhsal text data to struct
 	err := ffparser.Unmarshal(data, fileRecord, 0, 0)
 	fmt.Printf("%v\n", fileRecord)
 

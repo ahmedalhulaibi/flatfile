@@ -48,47 +48,49 @@ func main() {
 			if !endOfFile {
 				if !isPrefix {
 					fileRecord := &CustomerRecord{}
-					//ffparser.Examine(fileRecord)
-					//fmt.Println("Before Unmarshal Buffer: ", string(dataBuffer))
 					err := ffparser.Unmarshal(dataBuffer, fileRecord, 0, 0)
-					//fmt.Printf("Unmarshalled: %v\n", fileRecord)
+					fmt.Printf("Unmarshalled: %v\n", fileRecord)
 					checkError(err)
 					dataBuffer = []byte("")
 				}
-				//fmt.Println("After Unmarshal Buffer: ", string(dataBuffer))
 			}
 		}
 	} else if option == 2 {
 		// 2. incrementally unmarshal using the data we have
-		// this is much slower as it makes many repeated calls
+		// this is much slower as it requires
 		fileRecord := &CustomerRecord{}
-		//used to track how many fields were unmarshalled, also used as field offset for next unmarshal
+		//numFields used to track how many fields were unmarshalled, also used as field offset for next unmarshal
 		numFields := 0
 		startFieldIndex := 0
+
 		dataBuffer := []byte("")
 		remainder := []byte("")
 		for !endOfFile {
 			data, isPrefix, eof := readLine(reader)
 			endOfFile = eof
 			if !endOfFile {
+				//append read in data to dataBuffer
 				dataBuffer = append(dataBuffer, data...)
 			}
 
+			//determine how many fields can be unmarshalled
+			// store any data from dataBuffer that would not be unmarshalled
 			numFields, remainder, err = ffparser.CalcNumFieldsToMarshal(dataBuffer, fileRecord, startFieldIndex)
-			//fmt.Printf("Numfields(%s,%v,%d) = %d, %s\n", string(dataBuffer), fileRecord, startFieldIndex, numFields, string(remainder))
 			checkError(err)
+
 			//if we're not at the eof and we can marshal fields using the data in our data buffer
 			if !endOfFile && numFields > 0 {
-				//ffparser.Examine(fileRecord)
-				//fmt.Printf("Unmarshal(%s,%v,%d)\n", string(dataBuffer), fileRecord, startFieldIndex)
-				//fmt.Println("Before Unmarshal Buffer: ", string(dataBuffer))
 				err := ffparser.Unmarshal(dataBuffer, fileRecord, startFieldIndex, numFields)
+
+				//increment start field index
 				startFieldIndex += numFields
 				fmt.Printf("Unmarshalled: %v\n", fileRecord)
 				checkError(err)
+
+				//store remainder in dataBuffer for future use
 				dataBuffer = remainder
-				//fmt.Println("After Unmarshal Buffer: ", string(dataBuffer))
 			}
+
 			// if we reach EOL
 			//reset start field index
 			//clear fileRecord

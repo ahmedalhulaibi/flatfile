@@ -14,16 +14,18 @@ func min(a, b int) int {
 
 /*Unmarshal will read data and convert it into a struct based on a schema/map defined by struct tags
 
-Struct tags are in the form `ffp:"pos,len"`. pos and len should be integers > 0
+Struct tags are in the form `ffp:"col,len"`. col and len should be integers > 0
 
 startFieldIdx: index can be passed to indicate which struct field to start the unmarshal
-If startFieldIdx == 0 then Unmarshal will attempt to marshal all fields with an ffp tag
 
 numFieldsToMarshal: can be passed to indicate how many fields to unmarshal starting from startFieldIdx
 
+
+If startFieldIdx == 0 and umFieldsToMarshal == 0 then Unmarshal will attempt to marshal all fields with an ffp tag
+
 */
 func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal int) error {
-	posOffset := 0
+	colOffset := 0
 	//init ffpTag for later use
 	ffpTag := &ffpTagType{}
 	if reflect.TypeOf(v).Kind() == reflect.Ptr {
@@ -54,13 +56,13 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 					}
 					//determine pos offset based on start index in case start index not 1
 					if i == startFieldIdx {
-						posOffset = ffpTag.pos - 1
+						colOffset = ffpTag.col - 1
 					}
 
 					//determine if the current field is in range of the posOffset passed
-					if ffpTag.pos > posOffset {
+					if ffpTag.col > colOffset {
 						//extract byte slice from byte data
-						lowerBound := ffpTag.pos - 1 - posOffset
+						lowerBound := ffpTag.col - 1 - colOffset
 						upperBound := lowerBound + ffpTag.length
 						//and check that pos does not exceed length of bytes to prevent attempting to parse nulls
 						if lowerBound < len(data) {
@@ -103,7 +105,7 @@ func CalcNumFieldsToMarshal(data []byte, v interface{}, fieldOffset int) (int, [
 	ffpTag := &ffpTagType{}
 	dataLen := len(data)
 	numFieldsToMarshal := 0
-	remainder := []byte("")
+	var remainder []byte
 	cumulativeRecLength := 0
 	if reflect.TypeOf(v).Kind() == reflect.Ptr {
 		//Get underlying type

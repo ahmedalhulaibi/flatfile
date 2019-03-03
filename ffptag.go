@@ -7,7 +7,7 @@ import (
 )
 
 type ffpTagType struct {
-	pos    int
+	col    int
 	length int
 	occurs int
 }
@@ -27,16 +27,16 @@ func parseFfpTag(fieldTag string, ffpTag *ffpTagType) error {
 		return fmt.Errorf("ffparser: Not enough ffp tag params provided.\nPosition and length parameters must be provided.\nMust be in form `ffp:\"pos,len\"`")
 	}
 
-	pos, poserr := strconv.Atoi(params[0])
-	if poserr != nil {
-		return fmt.Errorf("ffparser: Error parsing position parameter\n%s", poserr)
+	col, colerr := strconv.Atoi(params[0])
+	if colerr != nil {
+		return fmt.Errorf("ffparser: Error parsing position parameter\n%s", colerr)
 	}
 
-	if pos < 1 {
+	if col < 1 {
 		return fmt.Errorf("ffparser: Out of range error. Position parameter cannot be less than 1. Please note position is 1-indexed not zero")
 	}
 
-	ffpTag.pos = pos
+	ffpTag.col = col
 
 	length, lenerr := strconv.Atoi(params[1])
 	if lenerr != nil {

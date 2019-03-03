@@ -36,6 +36,7 @@ func main() {
 		} else {
 			fileHeader := &CustomerRecord{}
 			ffparser.Examine(fileHeader)
+			//unmarhsal text data to struct
 			err := ffparser.Unmarshal(data, fileHeader, 0, 0)
 			fmt.Printf("%v\n", fileHeader)
 			checkError(err)
