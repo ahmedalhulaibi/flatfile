@@ -3,6 +3,8 @@ package ffparser
 import (
 	"fmt"
 	"reflect"
+
+	"github.com/pkg/errors"
 )
 
 func min(a, b int) int {
@@ -52,7 +54,7 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 
 					tagParseErr := parseFfpTag(fieldTag, ffpTag)
 					if tagParseErr != nil {
-						return fmt.Errorf("ffparser: Failed to parse field tag %s:\n\t%s", fieldTag, tagParseErr)
+						return errors.Wrapf(tagParseErr, "ffparser.Unmarshal: Failed to parse field tag %s", fieldTag)
 					}
 					//determine pos offset based on start index in case start index not 1
 					if i == startFieldIdx {
@@ -70,7 +72,7 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 
 							err := assignBasedOnKind(fieldType.Kind(), vStruct.Field(i), fieldData, ffpTag)
 							if err != nil {
-								return fmt.Errorf("ffparser: Failed to marshal.\n%s", err)
+								return errors.Wrap(err, "ffparser.Unmarshal: Failed to marshal")
 							}
 						}
 					}
@@ -79,7 +81,7 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 		}
 		return nil
 	}
-	return fmt.Errorf("ffparser: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
+	return fmt.Errorf("ffparser.Unmarshal: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
 }
 
 //CalcNumFieldsToMarshal determines how many fields can be marshalled successfully
@@ -127,7 +129,7 @@ func CalcNumFieldsToMarshal(data []byte, v interface{}, fieldOffset int) (int, [
 
 					tagParseErr := parseFfpTag(fieldTag, ffpTag)
 					if tagParseErr != nil {
-						return 0, []byte(""), fmt.Errorf("ffparser: Failed to parse field tag %s:\n\t%s", fieldTag, tagParseErr)
+						return 0, []byte(""), errors.Wrapf(tagParseErr, "ffparser.CalcNumFieldsToMarshal: Failed to parse field tag %s", fieldTag)
 					}
 
 					if ffpTag.occurs > 0 {
@@ -149,5 +151,5 @@ func CalcNumFieldsToMarshal(data []byte, v interface{}, fieldOffset int) (int, [
 		}
 		return numFieldsToMarshal, remainder, nil
 	}
-	return 0, []byte(""), fmt.Errorf("ffparser: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
+	return 0, []byte(""), fmt.Errorf("ffparser.CalcNumFieldsToMarshal: CalcNumFieldsToMarshal not complete. %s is not a pointer", reflect.TypeOf(v))
 }

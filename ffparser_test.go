@@ -19,7 +19,7 @@ int32  : -2147483648 to 2147483647
 int64  : -9223372036854775808 to 9223372036854775807
 */
 
-func TestBoolFalse(t *testing.T) {
+func TestBoolFalse_Unmarshal(t *testing.T) {
 	type BoolStruct struct {
 		BoolFalse1 bool `ffp:"1,1"`
 		BoolFalse2 bool `ffp:"2,1"`
@@ -47,7 +47,7 @@ func TestBoolFalse(t *testing.T) {
 		}
 	}
 }
-func TestBoolTrue(t *testing.T) {
+func TestBoolTrue_Unmarshal(t *testing.T) {
 	type BoolStruct struct {
 		BoolTrue1 bool `ffp:"1,1"`
 		BoolTrue2 bool `ffp:"2,1"`
@@ -75,7 +75,7 @@ func TestBoolTrue(t *testing.T) {
 	}
 }
 
-func TestBoolErr(t *testing.T) {
+func TestBoolErr_Unmarshal(t *testing.T) {
 	type BoolStruct struct {
 		BoolTrue1 bool `ffp:"1,1"`
 		BoolTrue2 bool `ffp:"2,1"`
@@ -96,7 +96,7 @@ func TestBoolErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestUint8(t *testing.T) {
+func TestUint8_Unmarshal(t *testing.T) {
 	type Uint8Struct struct {
 		Uint8One uint8 `ffp:"1,1"`
 		Uint8Two uint8 `ffp:"2,3"`
@@ -117,7 +117,7 @@ func TestUint8(t *testing.T) {
 	}
 }
 
-func TestUint8InvalidSyntaxErr(t *testing.T) {
+func TestUint8InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Uint8Struct struct {
 		Uint8One uint8 `ffp:"1,1"`
 	}
@@ -134,7 +134,7 @@ func TestUint8InvalidSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestUint8OutOfRangeErr(t *testing.T) {
+func TestUint8OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Uint8Struct struct {
 		Uint8One uint8 `ffp:"1,4"`
 	}
@@ -151,7 +151,7 @@ func TestUint8OutOfRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestUint16(t *testing.T) {
+func TestUint16_Unmarshal(t *testing.T) {
 	type Uint16Struct struct {
 		Uint16One uint16 `ffp:"1,1"`
 		Uint16Two uint16 `ffp:"2,5"`
@@ -172,7 +172,7 @@ func TestUint16(t *testing.T) {
 	}
 }
 
-func TestUint16InvalidSyntaxErr(t *testing.T) {
+func TestUint16InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Uint16Struct struct {
 		Uint16One uint16 `ffp:"1,1"`
 	}
@@ -189,7 +189,7 @@ func TestUint16InvalidSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestUint16OutOfRangeErr(t *testing.T) {
+func TestUint16OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Uint16Struct struct {
 		Uint16One uint16 `ffp:"1,5"`
 	}
@@ -206,7 +206,7 @@ func TestUint16OutOfRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestUint32(t *testing.T) {
+func TestUint32_Unmarshal(t *testing.T) {
 	type Uint32Struct struct {
 		Uint32One uint32 `ffp:"1,1"`
 		Uint32Two uint32 `ffp:"2,10"`
@@ -227,7 +227,7 @@ func TestUint32(t *testing.T) {
 	}
 }
 
-func TestUint32InvalidSyntaxErr(t *testing.T) {
+func TestUint32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Uint32Struct struct {
 		Uint32One uint32 `ffp:"1,1"`
 	}
@@ -244,7 +244,7 @@ func TestUint32InvalidSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestUint32OutOfRangeErr(t *testing.T) {
+func TestUint32OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Uint32Struct struct {
 		Uint32One uint32 `ffp:"1,10"`
 	}
@@ -261,7 +261,7 @@ func TestUint32OutOfRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestUint64(t *testing.T) {
+func TestUint64_Unmarshal(t *testing.T) {
 	type Uint64Struct struct {
 		Uint64One uint64 `ffp:"1,1"`
 		Uint64Two uint64 `ffp:"2,20"`
@@ -282,7 +282,7 @@ func TestUint64(t *testing.T) {
 	}
 }
 
-func TestUint64InvalidSyntaxErr(t *testing.T) {
+func TestUint64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Uint64Struct struct {
 		Uint64One uint64 `ffp:"1,1"`
 	}
@@ -299,7 +299,7 @@ func TestUint64InvalidSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestUint64OutOfRangeErr(t *testing.T) {
+func TestUint64OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Uint64Struct struct {
 		Uint64One uint64 `ffp:"1,20"`
 	}
@@ -316,7 +316,7 @@ func TestUint64OutOfRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestInt8(t *testing.T) {
+func TestInt8_Unmarshal(t *testing.T) {
 	type Int8Struct struct {
 		Int8One int8 `ffp:"1,4"`
 		Int8Two int8 `ffp:"5,3"`
@@ -337,7 +337,7 @@ func TestInt8(t *testing.T) {
 	}
 }
 
-func TestInt8InvalidSyntaxErr(t *testing.T) {
+func TestInt8InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Int8Struct struct {
 		Int8One int8 `ffp:"1,1"`
 	}
@@ -354,7 +354,7 @@ func TestInt8InvalidSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestInt8OutOfRangeErr(t *testing.T) {
+func TestInt8OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Int8Struct struct {
 		Int8One int8 `ffp:"1,4"`
 	}
@@ -371,7 +371,7 @@ func TestInt8OutOfRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestInt16(t *testing.T) {
+func TestInt16_Unmarshal(t *testing.T) {
 	type Int16Struct struct {
 		Int16One int16 `ffp:"1,6"`
 		Int16Two int16 `ffp:"7,5"`
@@ -392,7 +392,7 @@ func TestInt16(t *testing.T) {
 	}
 }
 
-func TestInt16InvalidSyntaxErr(t *testing.T) {
+func TestInt16InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Int16Struct struct {
 		Int16One int16 `ffp:"1,1"`
 	}
@@ -409,7 +409,7 @@ func TestInt16InvalidSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestInt16OutOfRangeErr(t *testing.T) {
+func TestInt16OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Int16Struct struct {
 		Int16One int16 `ffp:"1,5"`
 	}
@@ -426,7 +426,7 @@ func TestInt16OutOfRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestInt32(t *testing.T) {
+func TestInt32_Unmarshal(t *testing.T) {
 	type Int32Struct struct {
 		Int32One int32 `ffp:"1,11"`
 		Int32Two int32 `ffp:"12,10"`
@@ -447,7 +447,7 @@ func TestInt32(t *testing.T) {
 	}
 }
 
-func TestInt32InvalidSyntaxErr(t *testing.T) {
+func TestInt32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Int32Struct struct {
 		Int32One int32 `ffp:"1,1"`
 	}
@@ -464,7 +464,7 @@ func TestInt32InvalidSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestInt32OutOfRangeErr(t *testing.T) {
+func TestInt32OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Int32Struct struct {
 		Int32One int32 `ffp:"1,10"`
 	}
@@ -481,7 +481,7 @@ func TestInt32OutOfRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestInt64(t *testing.T) {
+func TestInt64_Unmarshal(t *testing.T) {
 	type Int64Struct struct {
 		Int64One int64 `ffp:"1,20"`
 		Int64Two int64 `ffp:"21,19"`
@@ -502,7 +502,7 @@ func TestInt64(t *testing.T) {
 	}
 }
 
-func TestInt64InvalidSyntaxErr(t *testing.T) {
+func TestInt64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Int64Struct struct {
 		Int64One int64 `ffp:"1,1"`
 	}
@@ -519,7 +519,7 @@ func TestInt64InvalidSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestInt64OutOfRangeErr(t *testing.T) {
+func TestInt64OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Int64Struct struct {
 		Int64One int64 `ffp:"1,19"`
 	}
@@ -536,7 +536,7 @@ func TestInt64OutOfRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFloat32(t *testing.T) {
+func TestFloat32_Unmarshal(t *testing.T) {
 	type Float32Struct struct {
 		Float32One float32 `ffp:"1,22"`
 		Float32Two float32 `ffp:"23,21"`
@@ -557,7 +557,7 @@ func TestFloat32(t *testing.T) {
 	}
 }
 
-func TestFloat32InvalidSyntaxErr(t *testing.T) {
+func TestFloat32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Float32Struct struct {
 		Float32One float32 `ffp:"1,1"`
 	}
@@ -574,7 +574,7 @@ func TestFloat32InvalidSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFloat32OutOfRangeErr(t *testing.T) {
+func TestFloat32OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Float32Struct struct {
 		Float32One float32 `ffp:"1,40"`
 	}
@@ -591,7 +591,7 @@ func TestFloat32OutOfRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFloat64(t *testing.T) {
+func TestFloat64_Unmarshal(t *testing.T) {
 	type Float64Struct struct {
 		Float64One float64 `ffp:"1,23"`
 		Float64Two float64 `ffp:"24,6"`
@@ -612,7 +612,7 @@ func TestFloat64(t *testing.T) {
 	}
 }
 
-func TestFloat64InvalidSyntaxErr(t *testing.T) {
+func TestFloat64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Float64Struct struct {
 		Float64One float64 `ffp:"1,1"`
 	}
@@ -629,7 +629,7 @@ func TestFloat64InvalidSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFloat64OutOfRangeErr(t *testing.T) {
+func TestFloat64OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Float64Struct struct {
 		Float64One float64 `ffp:"1,23"`
 	}
@@ -646,7 +646,18 @@ func TestFloat64OutOfRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFfpTagParsePosSyntaxErr(t *testing.T) {
+func TestFfpTagParsePosSyntaxErr_parseFfpTag(t *testing.T) {
+	testVal := `ffp:"asdf,1"`
+
+	err := parseFfpTag(testVal, &ffpTagType{})
+
+	if err == nil {
+		t.Error("parseFfpTag should return syntax error when failing to parse position param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+func TestFfpTagParsePosSyntaxErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
 		TestVal string `ffp:"asdf,1"`
 	}
@@ -663,7 +674,19 @@ func TestFfpTagParsePosSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFfpTagParseLenSyntaxErr(t *testing.T) {
+func TestFfpTagParseLenSyntaxErr_parseFfpTag(t *testing.T) {
+	testVal := `ffp:"1,asdf"`
+
+	err := parseFfpTag(testVal, &ffpTagType{})
+
+	if err == nil {
+		t.Error("parseFfpTag should return syntax error when failing to parse length param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFfpTagParseLenSyntaxErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
 		TestVal string `ffp:"1,asdf"`
 	}
@@ -680,7 +703,18 @@ func TestFfpTagParseLenSyntaxErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFfpTagParsePosRangeErr(t *testing.T) {
+func TestFfpTagParsePosRangeErr_parseFfpTag(t *testing.T) {
+	testVal := `ffp:"-1,10"`
+
+	err := parseFfpTag(testVal, &ffpTagType{})
+
+	if err == nil {
+		t.Error("parseFfpTag should return out of range error when failing to parse position param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+func TestFfpTagParsePosRangeErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
 		TestVal string `ffp:"-1,10"`
 	}
@@ -697,7 +731,19 @@ func TestFfpTagParsePosRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFfpTagParseLenRangeErr(t *testing.T) {
+func TestFfpTagParseLenRangeErr_parseFfpTag(t *testing.T) {
+	testVal := `ffp:"1,-1"`
+
+	err := parseFfpTag(testVal, &ffpTagType{})
+
+	if err == nil {
+		t.Error("parseFfpTag should return out of range error when failing to parse length param")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFfpTagParseLenRangeErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
 		TestVal string `ffp:"1,-1"`
 	}
@@ -714,7 +760,19 @@ func TestFfpTagParseLenRangeErr(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFfpTagParseMissingParamErr(t *testing.T) {
+func TestFfpTagParseMissingParamErr_parseFfpTag(t *testing.T) {
+	testVal := `ffp:""`
+
+	err := parseFfpTag(testVal, &ffpTagType{})
+
+	if err == nil {
+		t.Error("parseFfpTag should return missing parameter error")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestFfpTagParseMissingParamErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
 		TestVal string `ffp:""`
 	}
