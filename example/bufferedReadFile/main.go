@@ -75,7 +75,7 @@ func main() {
 
 			//determine how many fields can be unmarshalled
 			// store any data from dataBuffer that would not be unmarshalled
-			numFields, remainder, err = ffparser.CalcNumFieldsToMarshal(dataBuffer, fileRecord, startFieldIndex)
+			numFields, remainder, err = ffparser.CalcNumFieldsToUnmarshal(dataBuffer, fileRecord, startFieldIndex)
 			checkError(err)
 
 			//if we're not at the eof and we can marshal fields using the data in our data buffer

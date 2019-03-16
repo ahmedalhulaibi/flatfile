@@ -84,7 +84,7 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 	return fmt.Errorf("ffparser.Unmarshal: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
 }
 
-//CalcNumFieldsToMarshal determines how many fields can be marshalled successfully
+//CalcNumFieldsToUnmarshal determines how many fields can be marshalled successfully
 //This currently will not return an accurate result for overlapping fields
 //For example:
 //type Profile struct {
@@ -103,7 +103,7 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 //		Random    string `ffp:"7,9"`
 //}
 //This function would have to be redesigned to handle multiple scenarios of overlapping fields
-func CalcNumFieldsToMarshal(data []byte, v interface{}, fieldOffset int) (int, []byte, error) {
+func CalcNumFieldsToUnmarshal(data []byte, v interface{}, fieldOffset int) (int, []byte, error) {
 	ffpTag := &ffpTagType{}
 	dataLen := len(data)
 	numFieldsToMarshal := 0

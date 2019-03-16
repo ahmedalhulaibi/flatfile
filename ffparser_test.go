@@ -970,7 +970,7 @@ func TestCalcNumFieldsToMarshal(t *testing.T) {
 	for idx, tt := range tests {
 		testName := fmt.Sprintf("CalcNumFieldsToMarshal-%d", idx)
 		t.Run(testName, func(t *testing.T) {
-			got, _, err := CalcNumFieldsToMarshal(tt.Record, tt.MyProfile, tt.IndexOffset)
+			got, _, err := CalcNumFieldsToUnmarshal(tt.Record, tt.MyProfile, tt.IndexOffset)
 			if err != nil {
 				t.Errorf("CalcNumFieldsToMarshal(%v,%v,%d) got: %d want: %d err: %s", tt.Record, tt.MyProfile, tt.IndexOffset, got, tt.Want, err)
 			}
@@ -1002,7 +1002,7 @@ func TestCalcNumFieldsToMarshalRemainder(t *testing.T) {
 	for idx, tt := range tests {
 		testName := fmt.Sprintf("CalcNumFieldsToMarshalRemainder-%d", idx)
 		t.Run(testName, func(t *testing.T) {
-			_, got, err := CalcNumFieldsToMarshal(tt.Record, tt.MyProfile, tt.IndexOffset)
+			_, got, err := CalcNumFieldsToUnmarshal(tt.Record, tt.MyProfile, tt.IndexOffset)
 			if err != nil {
 				t.Errorf("err: %s", err)
 			}
