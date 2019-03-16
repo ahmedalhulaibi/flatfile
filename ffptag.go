@@ -1,7 +1,6 @@
 package ffparser
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -44,7 +43,7 @@ func parseFfpTag(fieldTag string, ffpTag *ffpTagType) error {
 	//column and length parameters must be provided
 	//
 	if len(params) < 2 {
-		return fmt.Errorf("ffparser.parseFfpTag: Not enough ffp tag params provided.\nColumn and length parameters must be provided.\nMust be in form `ffp:\"col,len\"`")
+		return errors.Errorf("ffparser.parseFfpTag: Not enough ffp tag params provided.\nColumn and length parameters must be provided.\nMust be in form `ffp:\"col,len\"`")
 	}
 
 	for idx, param := range params {
@@ -52,12 +51,12 @@ func parseFfpTag(fieldTag string, ffpTag *ffpTagType) error {
 		if strings.Contains(param, "=") {
 			options := strings.Split(param, "=")
 			if len(options) < 2 {
-				return fmt.Errorf("ffparser.parseFfpTag: Invalid formatting of option '%v'\nOptions should be in the form option=value\nValid options:%v", options, validOptions)
+				return errors.Errorf("ffparser.parseFfpTag: Invalid formatting of option '%v'\nOptions should be in the form option=value\nValid options:%v", options, validOptions)
 			}
 			if funcVal, exists := parseFuncMap[options[0]]; exists {
 				err = funcVal(options[1], ffpTag)
 			} else {
-				return fmt.Errorf("ffparser.parseFfpTag: Invalid tag parameter %s\nValid options: %v", options[0], validOptions)
+				return errors.Errorf("ffparser.parseFfpTag: Invalid tag parameter %s\nValid options: %v", options[0], validOptions)
 			}
 		} else {
 			//assume user is using positional options
@@ -77,6 +76,9 @@ func parseFfpTag(fieldTag string, ffpTag *ffpTagType) error {
 		}
 	}
 
+	if ffpTag.length == 0 || ffpTag.col == 0 {
+		return errors.New("ffparser.parseFfpTag: Column or length option not provided")
+	}
 	return nil
 }
 
@@ -87,7 +89,7 @@ func parseColumnOption(param string, ffpTag *ffpTagType) error {
 	}
 
 	if col < 1 {
-		return fmt.Errorf("ffparser.parseColumnOption: Out of range error. Column parameter cannot be less than 1. Please note column is 1-indexed not zero")
+		return errors.Errorf("ffparser.parseColumnOption: Out of range error. Column parameter cannot be less than 1. Please note column is 1-indexed not zero")
 	}
 	ffpTag.col = col
 	return nil
@@ -101,7 +103,7 @@ func parseLengthOption(param string, ffpTag *ffpTagType) error {
 	}
 
 	if length < 1 {
-		return fmt.Errorf("ffparser.parseLengthOption: Out of range error. Length parameter cannot be less than 1")
+		return errors.Errorf("ffparser.parseLengthOption: Out of range error. Length parameter cannot be less than 1")
 	}
 
 	ffpTag.length = length
@@ -115,7 +117,7 @@ func parseOccursOption(param string, ffpTag *ffpTagType) error {
 	}
 
 	if occurs < 2 {
-		return fmt.Errorf("ffparser.parseOccursOption: Out of range error. Occurs parameter cannot be less than 2")
+		return errors.Errorf("ffparser.parseOccursOption: Out of range error. Occurs parameter cannot be less than 2")
 	}
 
 	ffpTag.occurs = occurs

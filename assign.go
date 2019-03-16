@@ -61,7 +61,7 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 		}
 	case reflect.Slice:
 		if ffpTag.occurs < 1 {
-			err = fmt.Errorf("ffparser.assignBasedOnKind: Occurs clause must be provided when using slice. `ffp:\"pos,len,occurs\"`")
+			err = errors.Errorf("ffparser.assignBasedOnKind: Occurs clause must be provided when using slice. `ffp:\"pos,len,occurs\"`")
 		}
 		//make slice of length ffpTag.occurs to avoid index out of range err
 		field.Set(reflect.MakeSlice(field.Type(), ffpTag.occurs, ffpTag.occurs))
@@ -113,7 +113,7 @@ func assignUint(kind reflect.Kind, field reflect.Value, fieldData []byte) error 
 		}
 		return errors.Wrap(err, "ffparser.assignUint error")
 	}
-	return fmt.Errorf("ffparser.assignUint: Failed to assignUint %v ", field)
+	return errors.Errorf("ffparser.assignUint: Failed to assignUint %v ", field)
 }
 
 func assignUint8(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -177,7 +177,7 @@ func assignInt(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
 		}
 		return errors.Wrap(err, "ffparser.assignInt error")
 	}
-	return fmt.Errorf("ffparser.assignInt: Failed to assignInt %v ", field)
+	return errors.Errorf("ffparser.assignInt: Failed to assignInt %v ", field)
 }
 
 func assignInt8(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
