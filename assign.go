@@ -18,6 +18,7 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 	case reflect.Uint:
 		err = assignUint(kind, field, fieldData)
 	case reflect.Uint8:
+		//TODO: check ffpTag.override == byte, meaning user wants to store the byte value itself
 		err = assignUint8(kind, field, fieldData)
 	case reflect.Uint16:
 		err = assignUint16(kind, field, fieldData)
@@ -32,6 +33,7 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 	case reflect.Int16:
 		err = assignInt16(kind, field, fieldData)
 	case reflect.Int32:
+		//TODO: check ffpTag.override == byte, meaning user wants to store the byte value itself
 		err = assignInt32(kind, field, fieldData)
 	case reflect.Int64:
 		err = assignInt64(kind, field, fieldData)
