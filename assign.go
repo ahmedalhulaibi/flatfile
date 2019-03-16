@@ -1,7 +1,6 @@
 package ffparser
 
 import (
-	"fmt"
 	"reflect"
 	"strconv"
 	"unsafe"

@@ -14,18 +14,21 @@ type ffpTagType struct {
 	override string
 }
 
-var parseFuncMap map[string]func(string, *ffpTagType) error
+var parseFuncMap = map[string]func(string, *ffpTagType) error{
+	"col":      parseColumnOption,
+	"column":   parseColumnOption,
+	"len":      parseLengthOption,
+	"length":   parseLengthOption,
+	"occ":      parseOccursOption,
+	"occurs":   parseOccursOption,
+	"ovr":      parseOverrideOption,
+	"override": parseOverrideOption,
+}
+
+//validOptions is a list of the keys loaded from parseFuncMap. This is used purely to display options to user
 var validOptions []string
 
 func init() {
-	parseFuncMap = make(map[string]func(string, *ffpTagType) error)
-	parseFuncMap["col"] = parseColumnOption
-	parseFuncMap["column"] = parseColumnOption
-	parseFuncMap["len"] = parseLengthOption
-	parseFuncMap["legnth"] = parseLengthOption
-	parseFuncMap["occurs"] = parseOccursOption
-	parseFuncMap["override"] = parseOverrideOption
-
 	for key := range parseFuncMap {
 		validOptions = append(validOptions, key)
 	}
@@ -41,17 +44,16 @@ func parseFfpTag(fieldTag string, ffpTag *ffpTagType) error {
 	//split tag by comma to get column and length data
 	params := strings.Split(fieldTag, ",")
 	//column and length parameters must be provided
-	//
 	if len(params) < 2 {
 		return errors.Errorf("ffparser.parseFfpTag: Not enough ffp tag params provided.\nColumn and length parameters must be provided.\nMust be in form `ffp:\"col,len\"`")
 	}
 
 	for idx, param := range params {
-		//check whether or not tag is using positional options
+		//check whether or not tag is using named options
 		if strings.Contains(param, "=") {
 			options := strings.Split(param, "=")
 			if len(options) < 2 {
-				return errors.Errorf("ffparser.parseFfpTag: Invalid formatting of option '%v'\nOptions should be in the form option=value\nValid options:%v", options, validOptions)
+				return errors.Errorf("ffparser.parseFfpTag: Invalid formatting of named option '%v'\nNamed options should be in the form option=value\nValid options:%v", options, validOptions)
 			}
 			if funcVal, exists := parseFuncMap[options[0]]; exists {
 				err = funcVal(options[1], ffpTag)
@@ -125,6 +127,18 @@ func parseOccursOption(param string, ffpTag *ffpTagType) error {
 }
 
 func parseOverrideOption(param string, ffpTag *ffpTagType) error {
+	if isValidOverride(param) {
+		ffpTag.override = param
+		return nil
+	}
+	return errors.Errorf("ffparser.parseOverrideOption: Invalid override %s", param)
+}
 
-	return nil
+func isValidOverride(override string) bool {
+	switch override {
+	case "byte",
+		"rune":
+		return true
+	}
+	return false
 }
