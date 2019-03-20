@@ -34,11 +34,10 @@ func main() {
 		if data == nil {
 			eof = true
 		} else {
-			fileHeader := &CustomerRecord{}
-			ffparser.Examine(fileHeader)
+			fileRecord := &CustomerRecord{}
 			//unmarhsal text data to struct
-			err := ffparser.Unmarshal(data, fileHeader, 0, 0)
-			fmt.Printf("%v\n", fileHeader)
+			err := ffparser.Unmarshal(data, fileRecord, 0, 0)
+			fmt.Printf("%v\n", fileRecord)
 			checkError(err)
 		}
 	}
