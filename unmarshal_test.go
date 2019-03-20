@@ -646,17 +646,6 @@ func TestFloat64OutOfRangeErr_Unmarshal(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFfpTagParsePosSyntaxErr_parseFfpTag(t *testing.T) {
-	testVal := `ffp:"asdf,1"`
-
-	err := parseFfpTag(testVal, &ffpTagType{})
-
-	if err == nil {
-		t.Error("parseFfpTag should return syntax error when failing to parse position param")
-	}
-	t.Log(testVal)
-	t.Log(err)
-}
 func TestFfpTagParsePosSyntaxErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
 		TestVal string `ffp:"asdf,1"`
@@ -669,18 +658,6 @@ func TestFfpTagParsePosSyntaxErr_Unmarshal(t *testing.T) {
 
 	if err == nil {
 		t.Error("Unmarshal should return syntax error when failing to parse position param")
-	}
-	t.Log(testVal)
-	t.Log(err)
-}
-
-func TestFfpTagParseLenSyntaxErr_parseFfpTag(t *testing.T) {
-	testVal := `ffp:"1,asdf"`
-
-	err := parseFfpTag(testVal, &ffpTagType{})
-
-	if err == nil {
-		t.Error("parseFfpTag should return syntax error when failing to parse length param")
 	}
 	t.Log(testVal)
 	t.Log(err)
@@ -703,17 +680,6 @@ func TestFfpTagParseLenSyntaxErr_Unmarshal(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFfpTagParsePosRangeErr_parseFfpTag(t *testing.T) {
-	testVal := `ffp:"-1,10"`
-
-	err := parseFfpTag(testVal, &ffpTagType{})
-
-	if err == nil {
-		t.Error("parseFfpTag should return out of range error when failing to parse position param")
-	}
-	t.Log(testVal)
-	t.Log(err)
-}
 func TestFfpTagParsePosRangeErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
 		TestVal string `ffp:"-1,10"`
@@ -731,18 +697,6 @@ func TestFfpTagParsePosRangeErr_Unmarshal(t *testing.T) {
 	t.Log(err)
 }
 
-func TestFfpTagParseLenRangeErr_parseFfpTag(t *testing.T) {
-	testVal := `ffp:"1,-1"`
-
-	err := parseFfpTag(testVal, &ffpTagType{})
-
-	if err == nil {
-		t.Error("parseFfpTag should return out of range error when failing to parse length param")
-	}
-	t.Log(testVal)
-	t.Log(err)
-}
-
 func TestFfpTagParseLenRangeErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
 		TestVal string `ffp:"1,-1"`
@@ -755,18 +709,6 @@ func TestFfpTagParseLenRangeErr_Unmarshal(t *testing.T) {
 
 	if err == nil {
 		t.Error("Unmarshal should return out of range error when failing to parse length param")
-	}
-	t.Log(testVal)
-	t.Log(err)
-}
-
-func TestFfpTagParseMissingParamErr_parseFfpTag(t *testing.T) {
-	testVal := `ffp:""`
-
-	err := parseFfpTag(testVal, &ffpTagType{})
-
-	if err == nil {
-		t.Error("parseFfpTag should return missing parameter error")
 	}
 	t.Log(testVal)
 	t.Log(err)
@@ -1008,6 +950,72 @@ func TestCalcNumFieldsToMarshalRemainder(t *testing.T) {
 			}
 			if !bytes.Equal(got, tt.Want) {
 				t.Errorf("CalcNumFieldsToMarshalRemainder(%s,%v,%d) got: %s want: %s", string(tt.Record), tt.MyProfile, tt.IndexOffset, string(got), string(tt.Want))
+			}
+		})
+	}
+}
+
+func TestByte_Unmarshal(t *testing.T) {
+	type ByteStruct struct {
+		ByteOne byte `ffp:"1,1,override=byte"`
+		ByteTwo byte `ffp:"2,1,override=byte"`
+	}
+
+	var tests = []struct {
+		ByteSt ByteStruct
+		Record []byte
+		Want   ByteStruct
+	}{
+		{ByteStruct{}, []byte("1134567891"), ByteStruct{byte('1'), byte('1')}},
+		{ByteStruct{}, []byte("a1345678910"), ByteStruct{'a', '1'}},
+		{ByteStruct{}, []byte("a2"), ByteStruct{'a', '2'}},
+		{ByteStruct{}, []byte("/a"), ByteStruct{'/', 'a'}},
+		{ByteStruct{}, []byte("?1"), ByteStruct{'?', '1'}},
+	}
+
+	for idx, tt := range tests {
+		testName := fmt.Sprintf("TestByte_Unmarshal-%d", idx)
+		t.Run(testName, func(t *testing.T) {
+			err := Unmarshal(tt.Record, &tt.ByteSt, 0, 0)
+			if err != nil {
+				t.Errorf("err: %s", err)
+			}
+			if tt.ByteSt != tt.Want {
+				t.Errorf("Unmarshal(%s,%v,0,0) got: %v want: %v", string(tt.Record), tt.ByteSt, tt.ByteSt, tt.Want)
+			}
+		})
+	}
+}
+
+func TestRune_Unmarshal(t *testing.T) {
+	type RuneStruct struct {
+		RuneOne rune `ffp:"1,1,override=rune"`
+		RuneTwo rune `ffp:"2,1,override=rune"`
+	}
+
+	var tests = []struct {
+		RuneSt RuneStruct
+		Record []byte
+		Want   RuneStruct
+	}{
+		{RuneStruct{}, []byte("1134567891"), RuneStruct{'1', '1'}},
+		{RuneStruct{}, []byte("a1345678910"), RuneStruct{'a', '1'}},
+		{RuneStruct{}, []byte("a2"), RuneStruct{'a', '2'}},
+		{RuneStruct{}, []byte("/a"), RuneStruct{'/', 'a'}},
+		{RuneStruct{}, []byte("?1"), RuneStruct{'?', '1'}},
+	}
+
+	for idx, tt := range tests {
+		testName := fmt.Sprintf("TestRune_Unmarshal-%d", idx)
+		t.Run(testName, func(t *testing.T) {
+			err := Unmarshal(tt.Record, &tt.RuneSt, 0, 0)
+			if err != nil {
+				t.Errorf("err: %s", err)
+			}
+			if tt.RuneSt != tt.Want {
+				t.Errorf("Unmarshal(%s,%v,0,0) got: %v want: %v", string(tt.Record), tt.RuneSt, tt.RuneSt, tt.Want)
+			} else {
+				t.Logf("Unmarshal(%s,%v,0,0) got: %v want: %v", string(tt.Record), tt.RuneSt, tt.RuneSt, tt.Want)
 			}
 		})
 	}

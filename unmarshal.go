@@ -1,7 +1,6 @@
 package ffparser
 
 import (
-	"fmt"
 	"reflect"
 
 	"github.com/pkg/errors"
@@ -81,7 +80,7 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 		}
 		return nil
 	}
-	return fmt.Errorf("ffparser.Unmarshal: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
+	return errors.Errorf("ffparser.Unmarshal: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
 }
 
 //CalcNumFieldsToUnmarshal determines how many fields can be marshalled successfully
@@ -151,5 +150,5 @@ func CalcNumFieldsToUnmarshal(data []byte, v interface{}, fieldOffset int) (int,
 		}
 		return numFieldsToMarshal, remainder, nil
 	}
-	return 0, []byte(""), fmt.Errorf("ffparser.CalcNumFieldsToMarshal: CalcNumFieldsToMarshal not complete. %s is not a pointer", reflect.TypeOf(v))
+	return 0, []byte(""), errors.Errorf("ffparser.CalcNumFieldsToMarshal: CalcNumFieldsToMarshal not complete. %s is not a pointer", reflect.TypeOf(v))
 }
