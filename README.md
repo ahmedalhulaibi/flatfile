@@ -40,7 +40,7 @@ I can directly translate these to fields in a struct:
 
 ```go
 type CustomerRecord struct {
-    //ffparser is one indexed, position starts at 1
+    //ffparser is one indexed, column starts at 1
     Name        string `ffp:"1,3"`
     OpenDate    string `ffp:"4,10"`
     Age         uint   `ffp:"14,3"`
@@ -54,7 +54,7 @@ Once your layout is defined we can read a line from a file and unmarshal the dat
 
 ```go
 type CustomerRecord struct {
-	//ffparser is one indexed, position starts at 1
+	//ffparser is one indexed, column starts at 1
 	Name        string `ffp:"1,3"`
 	OpenDate    string `ffp:"4,10"`
 	Age         uint   `ffp:"14,3"`
@@ -122,8 +122,8 @@ func checkError(err error) {
 - [x] uint64
 - [x] float32
 - [x] float64
-- [ ] rune
-- [ ] byte
+- [x] rune
+- [x] byte
 - [x] Slice
 - [x] Array
 - [x] Nested struct
@@ -133,14 +133,14 @@ func checkError(err error) {
 
 - [x] Offset feature to support reading long lines of data. [Example](https://github.com/ahmedalhulaibi/ffparser/tree/master/example/bufferedReadFile)
 
+- [x] Byte and Rune support using type override. 
+
+    These are aliases for uint8 and int32 respectively. These require an override option to be supplied.
 ## TODO:
 - [ ] Flat File abstraction
 - [ ] Support for conditional unmarshal 
     
-    if field(pos,len) == "text" do unmarshal else skip. 
+    if field(col,len) == "text" do unmarshal else skip. 
     
     This is useful for flat files where there are multiple record layouts within the same file.
 
-- [ ] Byte and Rune support using type override. 
-
-    These are aliases for uint8 and int32 respectively. uint8 and int32 are currenlt parsed as actual numbers not the byte value of the data read in. This would require an override parameter to indicate to parse as byte/rune

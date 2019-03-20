@@ -954,3 +954,69 @@ func TestCalcNumFieldsToMarshalRemainder(t *testing.T) {
 		})
 	}
 }
+
+func TestByte_Unmarshal(t *testing.T) {
+	type ByteStruct struct {
+		ByteOne byte `ffp:"1,1,override=byte"`
+		ByteTwo byte `ffp:"2,1,override=byte"`
+	}
+
+	var tests = []struct {
+		ByteSt ByteStruct
+		Record []byte
+		Want   ByteStruct
+	}{
+		{ByteStruct{}, []byte("1134567891"), ByteStruct{byte('1'), byte('1')}},
+		{ByteStruct{}, []byte("a1345678910"), ByteStruct{'a', '1'}},
+		{ByteStruct{}, []byte("a2"), ByteStruct{'a', '2'}},
+		{ByteStruct{}, []byte("/a"), ByteStruct{'/', 'a'}},
+		{ByteStruct{}, []byte("?1"), ByteStruct{'?', '1'}},
+	}
+
+	for idx, tt := range tests {
+		testName := fmt.Sprintf("TestByte_Unmarshal-%d", idx)
+		t.Run(testName, func(t *testing.T) {
+			err := Unmarshal(tt.Record, &tt.ByteSt, 0, 0)
+			if err != nil {
+				t.Errorf("err: %s", err)
+			}
+			if tt.ByteSt != tt.Want {
+				t.Errorf("Unmarshal(%s,%v,0,0) got: %v want: %v", string(tt.Record), tt.ByteSt, tt.ByteSt, tt.Want)
+			}
+		})
+	}
+}
+
+func TestRune_Unmarshal(t *testing.T) {
+	type RuneStruct struct {
+		RuneOne rune `ffp:"1,1,override=rune"`
+		RuneTwo rune `ffp:"2,1,override=rune"`
+	}
+
+	var tests = []struct {
+		RuneSt RuneStruct
+		Record []byte
+		Want   RuneStruct
+	}{
+		{RuneStruct{}, []byte("1134567891"), RuneStruct{'1', '1'}},
+		{RuneStruct{}, []byte("a1345678910"), RuneStruct{'a', '1'}},
+		{RuneStruct{}, []byte("a2"), RuneStruct{'a', '2'}},
+		{RuneStruct{}, []byte("/a"), RuneStruct{'/', 'a'}},
+		{RuneStruct{}, []byte("?1"), RuneStruct{'?', '1'}},
+	}
+
+	for idx, tt := range tests {
+		testName := fmt.Sprintf("TestRune_Unmarshal-%d", idx)
+		t.Run(testName, func(t *testing.T) {
+			err := Unmarshal(tt.Record, &tt.RuneSt, 0, 0)
+			if err != nil {
+				t.Errorf("err: %s", err)
+			}
+			if tt.RuneSt != tt.Want {
+				t.Errorf("Unmarshal(%s,%v,0,0) got: %v want: %v", string(tt.Record), tt.RuneSt, tt.RuneSt, tt.Want)
+			} else {
+				t.Logf("Unmarshal(%s,%v,0,0) got: %v want: %v", string(tt.Record), tt.RuneSt, tt.RuneSt, tt.Want)
+			}
+		})
+	}
+}

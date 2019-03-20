@@ -3,6 +3,7 @@ package ffparser
 import (
 	"reflect"
 	"strconv"
+	"unicode/utf8"
 	"unsafe"
 
 	"github.com/pkg/errors"
@@ -18,8 +19,13 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 	case reflect.Uint:
 		err = assignUint(kind, field, fieldData)
 	case reflect.Uint8:
-		//TODO: check ffpTag.override == byte, meaning user wants to store the byte value itself
-		err = assignUint8(kind, field, fieldData)
+		//check ffpTag.override == byte, meaning user wants to store the byte value itself
+		if ffpTag.override == "byte" {
+			err = assignByte(field, fieldData[0])
+		} else {
+			err = assignUint8(kind, field, fieldData)
+		}
+
 	case reflect.Uint16:
 		err = assignUint16(kind, field, fieldData)
 	case reflect.Uint32:
@@ -33,8 +39,12 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 	case reflect.Int16:
 		err = assignInt16(kind, field, fieldData)
 	case reflect.Int32:
-		//TODO: check ffpTag.override == byte, meaning user wants to store the byte value itself
-		err = assignInt32(kind, field, fieldData)
+		//check ffpTag.override == rune, meaning user wants to store the rune value itself
+		if ffpTag.override == "rune" {
+			err = assignRune(field, fieldData)
+		} else {
+			err = assignInt32(kind, field, fieldData)
+		}
 	case reflect.Int64:
 		err = assignInt64(kind, field, fieldData)
 	case reflect.Float32:
@@ -62,7 +72,7 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 		}
 	case reflect.Slice:
 		if ffpTag.occurs < 1 {
-			err = errors.Errorf("ffparser.assignBasedOnKind: Occurs clause must be provided when using slice. `ffp:\"pos,len,occurs\"`")
+			err = errors.Errorf("ffparser.assignBasedOnKind: Occurs clause must be provided when using slice. `ffp:\"col,len,occurs\"`")
 		}
 		//make slice of length ffpTag.occurs to avoid index out of range err
 		field.Set(reflect.MakeSlice(field.Type(), ffpTag.occurs, ffpTag.occurs))
@@ -82,6 +92,7 @@ func assignBool(kind reflect.Kind, field reflect.Value, fieldData []byte) error 
 	if err == nil {
 		field.Set(reflect.ValueOf(newFieldVal))
 	}
+
 	return errors.Wrap(err, "ffparser.assignBool error")
 }
 
@@ -227,4 +238,18 @@ func assignFloat64(kind reflect.Kind, field reflect.Value, fieldData []byte) err
 		field.Set(reflect.ValueOf(newFieldVal))
 	}
 	return errors.Wrap(err, "ffparser.assignFloat64 error")
+}
+
+func assignByte(field reflect.Value, fieldData byte) error {
+	field.Set(reflect.ValueOf(fieldData))
+	return nil
+}
+
+func assignRune(field reflect.Value, fieldData []byte) error {
+	newFieldVal, _ := utf8.DecodeRune(fieldData)
+	if newFieldVal == utf8.RuneError {
+		return errors.New("ffparser.assignRune error")
+	}
+	field.Set(reflect.ValueOf(newFieldVal))
+	return nil
 }
