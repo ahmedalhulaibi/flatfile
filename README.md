@@ -34,18 +34,18 @@ Columns 32, Length  2   = Customer Country
 
 Each field in a struct can be mapped to a single field in a record using a struct tag.
 
-Struct tags are in the form `ffp:"col,len"` or for a slice field `ffp:"col,len,occurences"`.
+Struct tags are in the form `flatfile:"col,len"` or for a slice field `flatfile:"col,len,occurences"`.
 
 I can directly translate these to fields in a struct:
 
 ```go
 type CustomerRecord struct {
     //ffparser is one indexed, column starts at 1
-    Name        string `ffp:"1,3"`
-    OpenDate    string `ffp:"4,10"`
-    Age         uint   `ffp:"14,3"`
-    Address     string `ffp:"17,15"`
-    CountryCode string `ffp:"32,2"`
+    Name        string `flatfile:"1,3"`
+    OpenDate    string `flatfile:"4,10"`
+    Age         uint   `flatfile:"14,3"`
+    Address     string `flatfile:"17,15"`
+    CountryCode string `flatfile:"32,2"`
 }
 
 ```
@@ -55,11 +55,11 @@ Once your layout is defined we can read a line from a file and unmarshal the dat
 ```go
 type CustomerRecord struct {
 	//ffparser is one indexed, column starts at 1
-	Name        string `ffp:"1,3"`
-	OpenDate    string `ffp:"4,10"`
-	Age         uint   `ffp:"14,3"`
-	Address     string `ffp:"17,15"`
-	CountryCode string `ffp:"32,2"`
+	Name        string `flatfile:"1,3"`
+	OpenDate    string `flatfile:"4,10"`
+	Age         uint   `flatfile:"14,3"`
+	Address     string `flatfile:"17,15"`
+	CountryCode string `flatfile:"32,2"`
 }
 
 func main() {

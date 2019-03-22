@@ -16,11 +16,11 @@ import (
 // go run main.go 2
 type CustomerRecord struct {
 	//ffparser is one indexed, position starts at 1
-	Name        string `ffp:"1,3"`
-	OpenDate    string `ffp:"4,10"`
-	Age         uint   `ffp:"14,3"`
-	Address     string `ffp:"17,15"`
-	CountryCode string `ffp:"32,2"`
+	Name        string `flatfile:"1,3"`
+	OpenDate    string `flatfile:"4,10"`
+	Age         uint   `flatfile:"14,3"`
+	Address     string `flatfile:"17,15"`
+	CountryCode string `flatfile:"32,2"`
 }
 
 func main() {

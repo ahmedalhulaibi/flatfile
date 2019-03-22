@@ -10,20 +10,20 @@ import (
 // go run main.go
 
 type CustomerDemographic struct {
-	Name     string `ffp:"1,3"`
-	OpenDate string `ffp:"4,10"`
-	Age      uint   `ffp:"14,3"`
+	Name     string `flatfile:"1,3"`
+	OpenDate string `flatfile:"4,10"`
+	Age      uint   `flatfile:"14,3"`
 }
 
 type CustomerAddress struct {
-	Address     string `ffp:"1,15"`
-	CountryCode string `ffp:"16,2"`
+	Address     string `flatfile:"1,15"`
+	CountryCode string `flatfile:"16,2"`
 }
 
 type CustomerRecord struct {
 	//ffparser is one indexed, position starts at 1
-	Demographics CustomerDemographic `ffp:"1,16"`
-	Address      CustomerAddress     `ffp:"17,17"` //Nested struct. Define the address field range. Within the CustomerAddress struct, ffp tags should start at 1
+	Demographics CustomerDemographic `flatfile:"1,16"`
+	Address      CustomerAddress     `flatfile:"17,17"` //Nested struct. Define the address field range. Within the CustomerAddress struct, ffp tags should start at 1
 }
 
 func main() {

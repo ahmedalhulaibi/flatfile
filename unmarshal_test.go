@@ -21,12 +21,12 @@ int64  : -9223372036854775808 to 9223372036854775807
 
 func TestBoolFalse_Unmarshal(t *testing.T) {
 	type BoolStruct struct {
-		BoolFalse1 bool `ffp:"1,1"`
-		BoolFalse2 bool `ffp:"2,1"`
-		BoolFalse3 bool `ffp:"3,1"`
-		BoolFalse4 bool `ffp:"4,5"`
-		BoolFalse5 bool `ffp:"9,5"`
-		BoolFalse6 bool `ffp:"14,5"`
+		BoolFalse1 bool `flatfile:"1,1"`
+		BoolFalse2 bool `flatfile:"2,1"`
+		BoolFalse3 bool `flatfile:"3,1"`
+		BoolFalse4 bool `flatfile:"4,5"`
+		BoolFalse5 bool `flatfile:"9,5"`
+		BoolFalse6 bool `flatfile:"14,5"`
 	}
 
 	testVal := &BoolStruct{}
@@ -49,12 +49,12 @@ func TestBoolFalse_Unmarshal(t *testing.T) {
 }
 func TestBoolTrue_Unmarshal(t *testing.T) {
 	type BoolStruct struct {
-		BoolTrue1 bool `ffp:"1,1"`
-		BoolTrue2 bool `ffp:"2,1"`
-		BoolTrue3 bool `ffp:"3,1"`
-		BoolTrue4 bool `ffp:"4,4"`
-		BoolTrue5 bool `ffp:"8,4"`
-		BoolTrue6 bool `ffp:"12,4"`
+		BoolTrue1 bool `flatfile:"1,1"`
+		BoolTrue2 bool `flatfile:"2,1"`
+		BoolTrue3 bool `flatfile:"3,1"`
+		BoolTrue4 bool `flatfile:"4,4"`
+		BoolTrue5 bool `flatfile:"8,4"`
+		BoolTrue6 bool `flatfile:"12,4"`
 	}
 
 	testVal := &BoolStruct{}
@@ -77,12 +77,12 @@ func TestBoolTrue_Unmarshal(t *testing.T) {
 
 func TestBoolErr_Unmarshal(t *testing.T) {
 	type BoolStruct struct {
-		BoolTrue1 bool `ffp:"1,1"`
-		BoolTrue2 bool `ffp:"2,1"`
-		BoolTrue3 bool `ffp:"3,1"`
-		BoolTrue4 bool `ffp:"4,4"`
-		BoolTrue5 bool `ffp:"8,4"`
-		BoolTrue6 bool `ffp:"12,4"`
+		BoolTrue1 bool `flatfile:"1,1"`
+		BoolTrue2 bool `flatfile:"2,1"`
+		BoolTrue3 bool `flatfile:"3,1"`
+		BoolTrue4 bool `flatfile:"4,4"`
+		BoolTrue5 bool `flatfile:"8,4"`
+		BoolTrue6 bool `flatfile:"12,4"`
 	}
 
 	testVal := &BoolStruct{}
@@ -98,8 +98,8 @@ func TestBoolErr_Unmarshal(t *testing.T) {
 
 func TestUint8_Unmarshal(t *testing.T) {
 	type Uint8Struct struct {
-		Uint8One uint8 `ffp:"1,1"`
-		Uint8Two uint8 `ffp:"2,3"`
+		Uint8One uint8 `flatfile:"1,1"`
+		Uint8Two uint8 `flatfile:"2,3"`
 	}
 
 	testVal := &Uint8Struct{}
@@ -119,7 +119,7 @@ func TestUint8_Unmarshal(t *testing.T) {
 
 func TestUint8InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Uint8Struct struct {
-		Uint8One uint8 `ffp:"1,1"`
+		Uint8One uint8 `flatfile:"1,1"`
 	}
 
 	testVal := &Uint8Struct{}
@@ -136,7 +136,7 @@ func TestUint8InvalidSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestUint8OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Uint8Struct struct {
-		Uint8One uint8 `ffp:"1,4"`
+		Uint8One uint8 `flatfile:"1,4"`
 	}
 
 	testVal := &Uint8Struct{}
@@ -153,8 +153,8 @@ func TestUint8OutOfRangeErr_Unmarshal(t *testing.T) {
 
 func TestUint16_Unmarshal(t *testing.T) {
 	type Uint16Struct struct {
-		Uint16One uint16 `ffp:"1,1"`
-		Uint16Two uint16 `ffp:"2,5"`
+		Uint16One uint16 `flatfile:"1,1"`
+		Uint16Two uint16 `flatfile:"2,5"`
 	}
 
 	testVal := &Uint16Struct{}
@@ -174,7 +174,7 @@ func TestUint16_Unmarshal(t *testing.T) {
 
 func TestUint16InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Uint16Struct struct {
-		Uint16One uint16 `ffp:"1,1"`
+		Uint16One uint16 `flatfile:"1,1"`
 	}
 
 	testVal := &Uint16Struct{}
@@ -191,7 +191,7 @@ func TestUint16InvalidSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestUint16OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Uint16Struct struct {
-		Uint16One uint16 `ffp:"1,5"`
+		Uint16One uint16 `flatfile:"1,5"`
 	}
 
 	testVal := &Uint16Struct{}
@@ -208,8 +208,8 @@ func TestUint16OutOfRangeErr_Unmarshal(t *testing.T) {
 
 func TestUint32_Unmarshal(t *testing.T) {
 	type Uint32Struct struct {
-		Uint32One uint32 `ffp:"1,1"`
-		Uint32Two uint32 `ffp:"2,10"`
+		Uint32One uint32 `flatfile:"1,1"`
+		Uint32Two uint32 `flatfile:"2,10"`
 	}
 
 	testVal := &Uint32Struct{}
@@ -229,7 +229,7 @@ func TestUint32_Unmarshal(t *testing.T) {
 
 func TestUint32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Uint32Struct struct {
-		Uint32One uint32 `ffp:"1,1"`
+		Uint32One uint32 `flatfile:"1,1"`
 	}
 
 	testVal := &Uint32Struct{}
@@ -246,7 +246,7 @@ func TestUint32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestUint32OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Uint32Struct struct {
-		Uint32One uint32 `ffp:"1,10"`
+		Uint32One uint32 `flatfile:"1,10"`
 	}
 
 	testVal := &Uint32Struct{}
@@ -263,8 +263,8 @@ func TestUint32OutOfRangeErr_Unmarshal(t *testing.T) {
 
 func TestUint64_Unmarshal(t *testing.T) {
 	type Uint64Struct struct {
-		Uint64One uint64 `ffp:"1,1"`
-		Uint64Two uint64 `ffp:"2,20"`
+		Uint64One uint64 `flatfile:"1,1"`
+		Uint64Two uint64 `flatfile:"2,20"`
 	}
 
 	testVal := &Uint64Struct{}
@@ -284,7 +284,7 @@ func TestUint64_Unmarshal(t *testing.T) {
 
 func TestUint64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Uint64Struct struct {
-		Uint64One uint64 `ffp:"1,1"`
+		Uint64One uint64 `flatfile:"1,1"`
 	}
 
 	testVal := &Uint64Struct{}
@@ -301,7 +301,7 @@ func TestUint64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestUint64OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Uint64Struct struct {
-		Uint64One uint64 `ffp:"1,20"`
+		Uint64One uint64 `flatfile:"1,20"`
 	}
 
 	testVal := &Uint64Struct{}
@@ -318,8 +318,8 @@ func TestUint64OutOfRangeErr_Unmarshal(t *testing.T) {
 
 func TestInt8_Unmarshal(t *testing.T) {
 	type Int8Struct struct {
-		Int8One int8 `ffp:"1,4"`
-		Int8Two int8 `ffp:"5,3"`
+		Int8One int8 `flatfile:"1,4"`
+		Int8Two int8 `flatfile:"5,3"`
 	}
 
 	testVal := &Int8Struct{}
@@ -339,7 +339,7 @@ func TestInt8_Unmarshal(t *testing.T) {
 
 func TestInt8InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Int8Struct struct {
-		Int8One int8 `ffp:"1,1"`
+		Int8One int8 `flatfile:"1,1"`
 	}
 
 	testVal := &Int8Struct{}
@@ -356,7 +356,7 @@ func TestInt8InvalidSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestInt8OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Int8Struct struct {
-		Int8One int8 `ffp:"1,4"`
+		Int8One int8 `flatfile:"1,4"`
 	}
 
 	testVal := &Int8Struct{}
@@ -373,8 +373,8 @@ func TestInt8OutOfRangeErr_Unmarshal(t *testing.T) {
 
 func TestInt16_Unmarshal(t *testing.T) {
 	type Int16Struct struct {
-		Int16One int16 `ffp:"1,6"`
-		Int16Two int16 `ffp:"7,5"`
+		Int16One int16 `flatfile:"1,6"`
+		Int16Two int16 `flatfile:"7,5"`
 	}
 
 	testVal := &Int16Struct{}
@@ -394,7 +394,7 @@ func TestInt16_Unmarshal(t *testing.T) {
 
 func TestInt16InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Int16Struct struct {
-		Int16One int16 `ffp:"1,1"`
+		Int16One int16 `flatfile:"1,1"`
 	}
 
 	testVal := &Int16Struct{}
@@ -411,7 +411,7 @@ func TestInt16InvalidSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestInt16OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Int16Struct struct {
-		Int16One int16 `ffp:"1,5"`
+		Int16One int16 `flatfile:"1,5"`
 	}
 
 	testVal := &Int16Struct{}
@@ -428,8 +428,8 @@ func TestInt16OutOfRangeErr_Unmarshal(t *testing.T) {
 
 func TestInt32_Unmarshal(t *testing.T) {
 	type Int32Struct struct {
-		Int32One int32 `ffp:"1,11"`
-		Int32Two int32 `ffp:"12,10"`
+		Int32One int32 `flatfile:"1,11"`
+		Int32Two int32 `flatfile:"12,10"`
 	}
 
 	testVal := &Int32Struct{}
@@ -449,7 +449,7 @@ func TestInt32_Unmarshal(t *testing.T) {
 
 func TestInt32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Int32Struct struct {
-		Int32One int32 `ffp:"1,1"`
+		Int32One int32 `flatfile:"1,1"`
 	}
 
 	testVal := &Int32Struct{}
@@ -466,7 +466,7 @@ func TestInt32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestInt32OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Int32Struct struct {
-		Int32One int32 `ffp:"1,10"`
+		Int32One int32 `flatfile:"1,10"`
 	}
 
 	testVal := &Int32Struct{}
@@ -483,8 +483,8 @@ func TestInt32OutOfRangeErr_Unmarshal(t *testing.T) {
 
 func TestInt64_Unmarshal(t *testing.T) {
 	type Int64Struct struct {
-		Int64One int64 `ffp:"1,20"`
-		Int64Two int64 `ffp:"21,19"`
+		Int64One int64 `flatfile:"1,20"`
+		Int64Two int64 `flatfile:"21,19"`
 	}
 
 	testVal := &Int64Struct{}
@@ -504,7 +504,7 @@ func TestInt64_Unmarshal(t *testing.T) {
 
 func TestInt64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Int64Struct struct {
-		Int64One int64 `ffp:"1,1"`
+		Int64One int64 `flatfile:"1,1"`
 	}
 
 	testVal := &Int64Struct{}
@@ -521,7 +521,7 @@ func TestInt64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestInt64OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Int64Struct struct {
-		Int64One int64 `ffp:"1,19"`
+		Int64One int64 `flatfile:"1,19"`
 	}
 
 	testVal := &Int64Struct{}
@@ -538,8 +538,8 @@ func TestInt64OutOfRangeErr_Unmarshal(t *testing.T) {
 
 func TestFloat32_Unmarshal(t *testing.T) {
 	type Float32Struct struct {
-		Float32One float32 `ffp:"1,22"`
-		Float32Two float32 `ffp:"23,21"`
+		Float32One float32 `flatfile:"1,22"`
+		Float32Two float32 `flatfile:"23,21"`
 	}
 
 	testVal := &Float32Struct{}
@@ -559,7 +559,7 @@ func TestFloat32_Unmarshal(t *testing.T) {
 
 func TestFloat32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Float32Struct struct {
-		Float32One float32 `ffp:"1,1"`
+		Float32One float32 `flatfile:"1,1"`
 	}
 
 	testVal := &Float32Struct{}
@@ -576,7 +576,7 @@ func TestFloat32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestFloat32OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Float32Struct struct {
-		Float32One float32 `ffp:"1,40"`
+		Float32One float32 `flatfile:"1,40"`
 	}
 
 	testVal := &Float32Struct{}
@@ -593,8 +593,8 @@ func TestFloat32OutOfRangeErr_Unmarshal(t *testing.T) {
 
 func TestFloat64_Unmarshal(t *testing.T) {
 	type Float64Struct struct {
-		Float64One float64 `ffp:"1,23"`
-		Float64Two float64 `ffp:"24,6"`
+		Float64One float64 `flatfile:"1,23"`
+		Float64Two float64 `flatfile:"24,6"`
 	}
 
 	testVal := &Float64Struct{}
@@ -614,7 +614,7 @@ func TestFloat64_Unmarshal(t *testing.T) {
 
 func TestFloat64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	type Float64Struct struct {
-		Float64One float64 `ffp:"1,1"`
+		Float64One float64 `flatfile:"1,1"`
 	}
 
 	testVal := &Float64Struct{}
@@ -631,7 +631,7 @@ func TestFloat64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestFloat64OutOfRangeErr_Unmarshal(t *testing.T) {
 	type Float64Struct struct {
-		Float64One float64 `ffp:"1,23"`
+		Float64One float64 `flatfile:"1,23"`
 	}
 
 	testVal := &Float64Struct{}
@@ -648,7 +648,7 @@ func TestFloat64OutOfRangeErr_Unmarshal(t *testing.T) {
 
 func TestFfpTagParsePosSyntaxErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
-		TestVal string `ffp:"asdf,1"`
+		TestVal string `flatfile:"asdf,1"`
 	}
 
 	testVal := &FfpTest{}
@@ -665,7 +665,7 @@ func TestFfpTagParsePosSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestFfpTagParseLenSyntaxErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
-		TestVal string `ffp:"1,asdf"`
+		TestVal string `flatfile:"1,asdf"`
 	}
 
 	testVal := &FfpTest{}
@@ -682,7 +682,7 @@ func TestFfpTagParseLenSyntaxErr_Unmarshal(t *testing.T) {
 
 func TestFfpTagParsePosRangeErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
-		TestVal string `ffp:"-1,10"`
+		TestVal string `flatfile:"-1,10"`
 	}
 
 	testVal := &FfpTest{}
@@ -699,7 +699,7 @@ func TestFfpTagParsePosRangeErr_Unmarshal(t *testing.T) {
 
 func TestFfpTagParseLenRangeErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
-		TestVal string `ffp:"1,-1"`
+		TestVal string `flatfile:"1,-1"`
 	}
 
 	testVal := &FfpTest{}
@@ -716,7 +716,7 @@ func TestFfpTagParseLenRangeErr_Unmarshal(t *testing.T) {
 
 func TestFfpTagParseMissingParamErr_Unmarshal(t *testing.T) {
 	type FfpTest struct {
-		TestVal string `ffp:""`
+		TestVal string `flatfile:""`
 	}
 
 	testVal := &FfpTest{}
@@ -733,8 +733,8 @@ func TestFfpTagParseMissingParamErr_Unmarshal(t *testing.T) {
 
 func TestArrayParse(t *testing.T) {
 	type FfpTest struct {
-		TestVal [4]int     `ffp:"1,2"`
-		Names   [10]string `ffp:"9,3"`
+		TestVal [4]int     `flatfile:"1,2"`
+		Names   [10]string `flatfile:"9,3"`
 	}
 
 	testVal := &FfpTest{}
@@ -767,10 +767,10 @@ func TestArrayParse(t *testing.T) {
 
 func TestArrayNestedStructParse(t *testing.T) {
 	type Name struct {
-		NameData string `ffp:"1,3"`
+		NameData string `flatfile:"1,3"`
 	}
 	type FfpTest struct {
-		Names [3]Name `ffp:"1,3"`
+		Names [3]Name `flatfile:"1,3"`
 	}
 
 	testVal := &FfpTest{}
@@ -796,8 +796,8 @@ func TestArrayNestedStructParse(t *testing.T) {
 
 func TestSliceParse(t *testing.T) {
 	type FfpTest struct {
-		TestVal []int    `ffp:"1,2,4"`
-		Names   []string `ffp:"9,3,10"`
+		TestVal []int    `flatfile:"1,2,4"`
+		Names   []string `flatfile:"9,3,10"`
 	}
 
 	testVal := &FfpTest{}
@@ -833,10 +833,10 @@ func TestSliceParse(t *testing.T) {
 
 func TestSliceNestedStructParse(t *testing.T) {
 	type Name struct {
-		NameData string `ffp:"1,3"`
+		NameData string `flatfile:"1,3"`
 	}
 	type FfpTest struct {
-		Names []Name `ffp:"1,3,3"`
+		Names []Name `flatfile:"1,3,3"`
 	}
 
 	testVal := &FfpTest{}
@@ -863,9 +863,9 @@ func TestSliceNestedStructParse(t *testing.T) {
 
 func TestOffsetParse(t *testing.T) {
 	type Name struct {
-		NameData     string `ffp:"1,3"`
-		Age          int    `ffp:"4,3"`
-		CurrencyPref string `ffp:"7,3"`
+		NameData     string `flatfile:"1,3"`
+		Age          int    `flatfile:"4,3"`
+		CurrencyPref string `flatfile:"7,3"`
 	}
 
 	testVal := &Name{}
@@ -892,8 +892,8 @@ func TestOffsetParse(t *testing.T) {
 
 func TestCalcNumFieldsToMarshal(t *testing.T) {
 	type Profile struct {
-		NameData string `ffp:"1,9"`
-		Age      int    `ffp:"10,2"`
+		NameData string `flatfile:"1,9"`
+		Age      int    `flatfile:"10,2"`
 	}
 
 	var tests = []struct {
@@ -924,8 +924,8 @@ func TestCalcNumFieldsToMarshal(t *testing.T) {
 }
 func TestCalcNumFieldsToMarshalRemainder(t *testing.T) {
 	type Profile struct {
-		NameData string `ffp:"1,9"`
-		Age      int    `ffp:"10,2"`
+		NameData string `flatfile:"1,9"`
+		Age      int    `flatfile:"10,2"`
 	}
 
 	var tests = []struct {
@@ -957,8 +957,8 @@ func TestCalcNumFieldsToMarshalRemainder(t *testing.T) {
 
 func TestByte_Unmarshal(t *testing.T) {
 	type ByteStruct struct {
-		ByteOne byte `ffp:"1,1,override=byte"`
-		ByteTwo byte `ffp:"2,1,override=byte"`
+		ByteOne byte `flatfile:"1,1,override=byte"`
+		ByteTwo byte `flatfile:"2,1,override=byte"`
 	}
 
 	var tests = []struct {
@@ -989,8 +989,8 @@ func TestByte_Unmarshal(t *testing.T) {
 
 func TestRune_Unmarshal(t *testing.T) {
 	type RuneStruct struct {
-		RuneOne rune `ffp:"1,1,override=rune"`
-		RuneTwo rune `ffp:"2,1,override=rune"`
+		RuneOne rune `flatfile:"1,1,override=rune"`
+		RuneTwo rune `flatfile:"2,1,override=rune"`
 	}
 
 	var tests = []struct {

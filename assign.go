@@ -10,7 +10,7 @@ import (
 )
 
 //assignBasedOnKind performs assignment of fieldData to field based on kind
-func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte, ffpTag *ffpTagType) error {
+func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte, ffpTag *flatfileTag) error {
 	var err error
 	err = nil
 	switch kind {
@@ -72,7 +72,7 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 		}
 	case reflect.Slice:
 		if ffpTag.occurs < 1 {
-			err = errors.Errorf("ffparser.assignBasedOnKind: Occurs clause must be provided when using slice. `ffp:\"col,len,occurs\"`")
+			err = errors.Errorf("ffparser.assignBasedOnKind: Occurs clause must be provided when using slice. `flatfile:\"col,len,occurs\"`")
 		}
 		//make slice of length ffpTag.occurs to avoid index out of range err
 		field.Set(reflect.MakeSlice(field.Type(), ffpTag.occurs, ffpTag.occurs))

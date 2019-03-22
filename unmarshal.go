@@ -15,7 +15,7 @@ func min(a, b int) int {
 
 /*Unmarshal will read data and convert it into a struct based on a schema/map defined by struct tags
 
-Struct tags are in the form `ffp:"col,len"`. col and len should be integers > 0
+Struct tags are in the form `flatfile:"col,len"`. col and len should be integers > 0
 
 startFieldIdx: index can be passed to indicate which struct field to start the unmarshal
 
@@ -28,7 +28,7 @@ If startFieldIdx == 0 and umFieldsToMarshal == 0 then Unmarshal will attempt to 
 func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal int) error {
 	colOffset := 0
 	//init ffpTag for later use
-	ffpTag := &ffpTagType{}
+	ffpTag := &flatfileTag{}
 	if reflect.TypeOf(v).Kind() == reflect.Ptr {
 		//Get underlying type
 		vType := reflect.TypeOf(v).Elem()
@@ -48,10 +48,10 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 
 				//Get underlying type of field
 				fieldType := vStruct.Field(i).Type()
-				fieldTag, tagFlag := vType.Field(i).Tag.Lookup("ffp")
+				fieldTag, tagFlag := vType.Field(i).Tag.Lookup("flatfile")
 				if tagFlag {
 
-					tagParseErr := parseFfpTag(fieldTag, ffpTag)
+					tagParseErr := parseFlatfileTag(fieldTag, ffpTag)
 					if tagParseErr != nil {
 						return errors.Wrapf(tagParseErr, "ffparser.Unmarshal: Failed to parse field tag %s", fieldTag)
 					}
@@ -87,23 +87,23 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 //This currently will not return an accurate result for overlapping fields
 //For example:
 //type Profile struct {
-//		FirstName string `ffp:"1,10"`
-//		LastName  string `ffp:"11,10"`
-//		FullName  string `ffp:"1,20"`
+//		FirstName string `flatfile:"1,10"`
+//		LastName  string `flatfile:"11,10"`
+//		FullName  string `flatfile:"1,20"`
 //}
 //Expected output is that 3 fields can be marshalled successfully
 //The result will be 2
 //Another example:
 //type Profile struct
 //type Profile struct {
-//		FirstName string `ffp:"1,10"`
-//		LastName  string `ffp:"11,10"`
-//		FullName  string `ffp:"1,20"`
-//		Random    string `ffp:"7,9"`
+//		FirstName string `flatfile:"1,10"`
+//		LastName  string `flatfile:"11,10"`
+//		FullName  string `flatfile:"1,20"`
+//		Random    string `flatfile:"7,9"`
 //}
 //This function would have to be redesigned to handle multiple scenarios of overlapping fields
 func CalcNumFieldsToUnmarshal(data []byte, v interface{}, fieldOffset int) (int, []byte, error) {
-	ffpTag := &ffpTagType{}
+	ffpTag := &flatfileTag{}
 	dataLen := len(data)
 	numFieldsToMarshal := 0
 	var remainder []byte
@@ -123,10 +123,10 @@ func CalcNumFieldsToUnmarshal(data []byte, v interface{}, fieldOffset int) (int,
 				//Get underlying type of field
 				fieldType := vStruct.Field(i).Type()
 
-				fieldTag, tagFlag := vType.Field(i).Tag.Lookup("ffp")
+				fieldTag, tagFlag := vType.Field(i).Tag.Lookup("flatfile")
 				if tagFlag {
 
-					tagParseErr := parseFfpTag(fieldTag, ffpTag)
+					tagParseErr := parseFlatfileTag(fieldTag, ffpTag)
 					if tagParseErr != nil {
 						return 0, []byte(""), errors.Wrapf(tagParseErr, "ffparser.CalcNumFieldsToMarshal: Failed to parse field tag %s", fieldTag)
 					}
