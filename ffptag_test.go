@@ -8,19 +8,19 @@ import (
 func TestFfpTagPositionalOptions_parseFfpTag(t *testing.T) {
 	var tests = []struct {
 		tagValue  string
-		ResultTag *ffpTagType
-		WantTag   *ffpTagType
+		ResultTag *flatfileTag
+		WantTag   *flatfileTag
 	}{
-		{"1,1", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 0, override: ""}},
-		{"1,1,2", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 2, override: ""}},
-		{"1,1,2,byte", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 2, override: "byte"}},
-		{"1,1,2,rune", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 2, override: "rune"}},
+		{"1,1", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 0, override: ""}},
+		{"1,1,2", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 2, override: ""}},
+		{"1,1,2,byte", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 2, override: "byte"}},
+		{"1,1,2,rune", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 2, override: "rune"}},
 	}
 
 	for idx, tt := range tests {
 		testName := fmt.Sprintf("TestFfpTagPositionalOptions_parseFfpTag-%d", idx)
 		t.Run(testName, func(t *testing.T) {
-			err := parseFfpTag(tt.tagValue, tt.ResultTag)
+			err := parseFlatfileTag(tt.tagValue, tt.ResultTag)
 			if err != nil {
 				t.Errorf("parseFfpTag(%v,%v) got: %v want: %v err: %s", tt.tagValue, tt.ResultTag, tt.ResultTag, tt.WantTag, err)
 			}
@@ -33,23 +33,23 @@ func TestFfpTagPositionalOptions_parseFfpTag(t *testing.T) {
 func TestFfpTagNamedOptions_parseFfpTag(t *testing.T) {
 	var tests = []struct {
 		tagValue  string
-		ResultTag *ffpTagType
-		WantTag   *ffpTagType
+		ResultTag *flatfileTag
+		WantTag   *flatfileTag
 	}{
-		{"col=1,len=1", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 0, override: ""}},
-		{"column=1,len=1", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 0, override: ""}},
-		{"col=1,length=1", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 0, override: ""}},
-		{"column=1,length=1", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 0, override: ""}},
-		{"col=1,len=1,occ=2", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 2, override: ""}},
-		{"col=1,len=1,occurs=2", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 2, override: ""}},
-		{"col=1,len=1,occ=2,ovr=byte", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 2, override: "byte"}},
-		{"col=1,len=1,occ=2,override=rune", &ffpTagType{}, &ffpTagType{col: 1, length: 1, occurs: 2, override: "rune"}},
+		{"col=1,len=1", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 0, override: ""}},
+		{"column=1,len=1", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 0, override: ""}},
+		{"col=1,length=1", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 0, override: ""}},
+		{"column=1,length=1", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 0, override: ""}},
+		{"col=1,len=1,occ=2", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 2, override: ""}},
+		{"col=1,len=1,occurs=2", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 2, override: ""}},
+		{"col=1,len=1,occ=2,ovr=byte", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 2, override: "byte"}},
+		{"col=1,len=1,occ=2,override=rune", &flatfileTag{}, &flatfileTag{col: 1, length: 1, occurs: 2, override: "rune"}},
 	}
 
 	for idx, tt := range tests {
 		testName := fmt.Sprintf("TestFfpTagPositionalOptions_parseFfpTag-%d", idx)
 		t.Run(testName, func(t *testing.T) {
-			err := parseFfpTag(tt.tagValue, tt.ResultTag)
+			err := parseFlatfileTag(tt.tagValue, tt.ResultTag)
 			if err != nil {
 				t.Errorf("parseFfpTag(%v,%v) got: %v want: %v err: %s", tt.tagValue, tt.ResultTag, tt.ResultTag, tt.WantTag, err)
 			}
@@ -60,9 +60,9 @@ func TestFfpTagNamedOptions_parseFfpTag(t *testing.T) {
 	}
 }
 func TestFfpTagParseMissingParamErr_parseFfpTag(t *testing.T) {
-	testVal := `ffp:""`
+	testVal := `flatfile:""`
 
-	err := parseFfpTag(testVal, &ffpTagType{})
+	err := parseFlatfileTag(testVal, &flatfileTag{})
 
 	if err == nil {
 		t.Error("parseFfpTag should return missing parameter error")
@@ -72,9 +72,9 @@ func TestFfpTagParseMissingParamErr_parseFfpTag(t *testing.T) {
 }
 
 func TestFfpTagParseLenRangeErr_parseFfpTag(t *testing.T) {
-	testVal := `ffp:"1,-1"`
+	testVal := `flatfile:"1,-1"`
 
-	err := parseFfpTag(testVal, &ffpTagType{})
+	err := parseFlatfileTag(testVal, &flatfileTag{})
 
 	if err == nil {
 		t.Error("parseFfpTag should return out of range error when failing to parse length param")
@@ -84,9 +84,9 @@ func TestFfpTagParseLenRangeErr_parseFfpTag(t *testing.T) {
 }
 
 func TestFfpTagParsePosRangeErr_parseFfpTag(t *testing.T) {
-	testVal := `ffp:"-1,10"`
+	testVal := `flatfile:"-1,10"`
 
-	err := parseFfpTag(testVal, &ffpTagType{})
+	err := parseFlatfileTag(testVal, &flatfileTag{})
 
 	if err == nil {
 		t.Error("parseFfpTag should return out of range error when failing to parse position param")
@@ -96,9 +96,9 @@ func TestFfpTagParsePosRangeErr_parseFfpTag(t *testing.T) {
 }
 
 func TestFfpTagParseLenSyntaxErr_parseFfpTag(t *testing.T) {
-	testVal := `ffp:"1,asdf"`
+	testVal := `flatfile:"1,asdf"`
 
-	err := parseFfpTag(testVal, &ffpTagType{})
+	err := parseFlatfileTag(testVal, &flatfileTag{})
 
 	if err == nil {
 		t.Error("parseFfpTag should return syntax error when failing to parse length param")
@@ -108,9 +108,9 @@ func TestFfpTagParseLenSyntaxErr_parseFfpTag(t *testing.T) {
 }
 
 func TestFfpTagParsePosSyntaxErr_parseFfpTag(t *testing.T) {
-	testVal := `ffp:"asdf,1"`
+	testVal := `flatfile:"asdf,1"`
 
-	err := parseFfpTag(testVal, &ffpTagType{})
+	err := parseFlatfileTag(testVal, &flatfileTag{})
 
 	if err == nil {
 		t.Error("parseFfpTag should return syntax error when failing to parse position param")

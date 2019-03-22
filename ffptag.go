@@ -7,14 +7,14 @@ import (
 	"github.com/pkg/errors"
 )
 
-type ffpTagType struct {
+type flatfileTag struct {
 	col      int
 	length   int
 	occurs   int
 	override string
 }
 
-var parseFuncMap = map[string]func(string, *ffpTagType) error{
+var parseFuncMap = map[string]func(string, *flatfileTag) error{
 	"col":      parseColumnOption,
 	"column":   parseColumnOption,
 	"len":      parseLengthOption,
@@ -34,18 +34,18 @@ func init() {
 	}
 }
 
-//parseFfpTag parses an ffp struct tag on a field
+//parseFlatfileTag parses an ffp struct tag on a field
 //Tags are expected to be in the form:
 // col,len,occurs
 // where col is an int > 0
 //		 len is an int
-func parseFfpTag(fieldTag string, ffpTag *ffpTagType) error {
+func parseFlatfileTag(fieldTag string, ffpTag *flatfileTag) error {
 	var err error
 	//split tag by comma to get column and length data
 	params := strings.Split(fieldTag, ",")
 	//column and length parameters must be provided
 	if len(params) < 2 {
-		return errors.Errorf("ffparser.parseFfpTag: Not enough ffp tag params provided.\nColumn and length parameters must be provided.\nMust be in form `ffp:\"col,len\"`")
+		return errors.Errorf("ffparser.parseFlatfileTag: Not enough ffp tag params provided.\nColumn and length parameters must be provided.\nMust be in form `flatfile:\"col,len\"`")
 	}
 
 	for idx, param := range params {
@@ -53,12 +53,12 @@ func parseFfpTag(fieldTag string, ffpTag *ffpTagType) error {
 		if strings.Contains(param, "=") {
 			options := strings.Split(param, "=")
 			if len(options) < 2 {
-				return errors.Errorf("ffparser.parseFfpTag: Invalid formatting of named option '%v'\nNamed options should be in the form option=value\nValid options:%v", options, validOptions)
+				return errors.Errorf("ffparser.parseFlatfileTag: Invalid formatting of named option '%v'\nNamed options should be in the form option=value\nValid options:%v", options, validOptions)
 			}
 			if funcVal, exists := parseFuncMap[options[0]]; exists {
 				err = funcVal(options[1], ffpTag)
 			} else {
-				return errors.Errorf("ffparser.parseFfpTag: Invalid tag parameter %s\nValid options: %v", options[0], validOptions)
+				return errors.Errorf("ffparser.parseFlatfileTag: Invalid tag parameter %s\nValid options: %v", options[0], validOptions)
 			}
 		} else {
 			//assume user is using positional options
@@ -74,17 +74,17 @@ func parseFfpTag(fieldTag string, ffpTag *ffpTagType) error {
 			}
 		}
 		if err != nil {
-			return errors.Wrapf(err, "ffparser.parseFfpTag: Error parsing tag option %s", param)
+			return errors.Wrapf(err, "ffparser.parseFlatfileTag: Error parsing tag option %s", param)
 		}
 	}
 
 	if ffpTag.length == 0 || ffpTag.col == 0 {
-		return errors.New("ffparser.parseFfpTag: Column or length option not provided")
+		return errors.New("ffparser.parseFlatfileTag: Column or length option not provided")
 	}
 	return nil
 }
 
-func parseColumnOption(param string, ffpTag *ffpTagType) error {
+func parseColumnOption(param string, ffpTag *flatfileTag) error {
 	col, colerr := strconv.Atoi(param)
 	if colerr != nil {
 		return errors.Wrapf(colerr, "ffparser.parseColumnOption: Error parsing tag column parameter %s", param)
@@ -97,7 +97,7 @@ func parseColumnOption(param string, ffpTag *ffpTagType) error {
 	return nil
 }
 
-func parseLengthOption(param string, ffpTag *ffpTagType) error {
+func parseLengthOption(param string, ffpTag *flatfileTag) error {
 
 	length, lenerr := strconv.Atoi(param)
 	if lenerr != nil {
@@ -112,7 +112,7 @@ func parseLengthOption(param string, ffpTag *ffpTagType) error {
 	return nil
 }
 
-func parseOccursOption(param string, ffpTag *ffpTagType) error {
+func parseOccursOption(param string, ffpTag *flatfileTag) error {
 	occurs, occerr := strconv.Atoi(param)
 	if occerr != nil {
 		return errors.Wrapf(occerr, "ffparser.parseOccursOption: Error parsing tag occurs parameter %s", param)
@@ -126,7 +126,7 @@ func parseOccursOption(param string, ffpTag *ffpTagType) error {
 	return nil
 }
 
-func parseOverrideOption(param string, ffpTag *ffpTagType) error {
+func parseOverrideOption(param string, ffpTag *flatfileTag) error {
 	if isValidOverride(param) {
 		ffpTag.override = param
 		return nil
