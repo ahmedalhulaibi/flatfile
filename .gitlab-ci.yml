@@ -1,5 +1,7 @@
 test:
   image: golang:1.12
   script:
-    - go test -v
-    - sh runExamples.sh
+    - go test -v -coverprofile=coverage.txt -covermode=atomic
+    - bash runExamples.sh
+  after_script:
+    - bash <(curl -s https://codecov.io/bash) -t 0d3ca04e-4b0e-4184-acbd-0effd074f26a
