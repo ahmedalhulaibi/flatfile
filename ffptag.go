@@ -1,4 +1,4 @@
-package ffparser
+package flatfile
 
 import (
 	"strconv"
@@ -45,7 +45,7 @@ func parseFlatfileTag(fieldTag string, ffpTag *flatfileTag) error {
 	params := strings.Split(fieldTag, ",")
 	//column and length parameters must be provided
 	if len(params) < 2 {
-		return errors.Errorf("ffparser.parseFlatfileTag: Not enough ffp tag params provided.\nColumn and length parameters must be provided.\nMust be in form `flatfile:\"col,len\"`")
+		return errors.Errorf("flatfile.parseFlatfileTag: Not enough ffp tag params provided.\nColumn and length parameters must be provided.\nMust be in form `flatfile:\"col,len\"`")
 	}
 
 	for idx, param := range params {
@@ -53,12 +53,12 @@ func parseFlatfileTag(fieldTag string, ffpTag *flatfileTag) error {
 		if strings.Contains(param, "=") {
 			options := strings.Split(param, "=")
 			if len(options) < 2 {
-				return errors.Errorf("ffparser.parseFlatfileTag: Invalid formatting of named option '%v'\nNamed options should be in the form option=value\nValid options:%v", options, validOptions)
+				return errors.Errorf("flatfile.parseFlatfileTag: Invalid formatting of named option '%v'\nNamed options should be in the form option=value\nValid options:%v", options, validOptions)
 			}
 			if funcVal, exists := parseFuncMap[options[0]]; exists {
 				err = funcVal(options[1], ffpTag)
 			} else {
-				return errors.Errorf("ffparser.parseFlatfileTag: Invalid tag parameter %s\nValid options: %v", options[0], validOptions)
+				return errors.Errorf("flatfile.parseFlatfileTag: Invalid tag parameter %s\nValid options: %v", options[0], validOptions)
 			}
 		} else {
 			//assume user is using positional options
@@ -74,12 +74,12 @@ func parseFlatfileTag(fieldTag string, ffpTag *flatfileTag) error {
 			}
 		}
 		if err != nil {
-			return errors.Wrapf(err, "ffparser.parseFlatfileTag: Error parsing tag option %s", param)
+			return errors.Wrapf(err, "flatfile.parseFlatfileTag: Error parsing tag option %s", param)
 		}
 	}
 
 	if ffpTag.length == 0 || ffpTag.col == 0 {
-		return errors.New("ffparser.parseFlatfileTag: Column or length option not provided")
+		return errors.New("flatfile.parseFlatfileTag: Column or length option not provided")
 	}
 	return nil
 }
@@ -87,11 +87,11 @@ func parseFlatfileTag(fieldTag string, ffpTag *flatfileTag) error {
 func parseColumnOption(param string, ffpTag *flatfileTag) error {
 	col, colerr := strconv.Atoi(param)
 	if colerr != nil {
-		return errors.Wrapf(colerr, "ffparser.parseColumnOption: Error parsing tag column parameter %s", param)
+		return errors.Wrapf(colerr, "flatfile.parseColumnOption: Error parsing tag column parameter %s", param)
 	}
 
 	if col < 1 {
-		return errors.Errorf("ffparser.parseColumnOption: Out of range error. Column parameter cannot be less than 1. Please note column is 1-indexed not zero")
+		return errors.Errorf("flatfile.parseColumnOption: Out of range error. Column parameter cannot be less than 1. Please note column is 1-indexed not zero")
 	}
 	ffpTag.col = col
 	return nil
@@ -101,11 +101,11 @@ func parseLengthOption(param string, ffpTag *flatfileTag) error {
 
 	length, lenerr := strconv.Atoi(param)
 	if lenerr != nil {
-		return errors.Wrapf(lenerr, "ffparser.parseLengthOption: Error parsing tag length parameter %s", param)
+		return errors.Wrapf(lenerr, "flatfile.parseLengthOption: Error parsing tag length parameter %s", param)
 	}
 
 	if length < 1 {
-		return errors.Errorf("ffparser.parseLengthOption: Out of range error. Length parameter cannot be less than 1")
+		return errors.Errorf("flatfile.parseLengthOption: Out of range error. Length parameter cannot be less than 1")
 	}
 
 	ffpTag.length = length
@@ -115,11 +115,11 @@ func parseLengthOption(param string, ffpTag *flatfileTag) error {
 func parseOccursOption(param string, ffpTag *flatfileTag) error {
 	occurs, occerr := strconv.Atoi(param)
 	if occerr != nil {
-		return errors.Wrapf(occerr, "ffparser.parseOccursOption: Error parsing tag occurs parameter %s", param)
+		return errors.Wrapf(occerr, "flatfile.parseOccursOption: Error parsing tag occurs parameter %s", param)
 	}
 
 	if occurs < 2 {
-		return errors.Errorf("ffparser.parseOccursOption: Out of range error. Occurs parameter cannot be less than 2")
+		return errors.Errorf("flatfile.parseOccursOption: Out of range error. Occurs parameter cannot be less than 2")
 	}
 
 	ffpTag.occurs = occurs
@@ -131,7 +131,7 @@ func parseOverrideOption(param string, ffpTag *flatfileTag) error {
 		ffpTag.override = param
 		return nil
 	}
-	return errors.Errorf("ffparser.parseOverrideOption: Invalid override %s", param)
+	return errors.Errorf("flatfile.parseOverrideOption: Invalid override %s", param)
 }
 
 func isValidOverride(override string) bool {

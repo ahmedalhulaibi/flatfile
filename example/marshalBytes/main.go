@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/ahmedalhulaibi/ffparser"
+	"github.com/ahmedalhulaibi/flatfile"
 )
 
 type CustomerRecord struct {
-	//ffparser is one indexed, position starts at 1
+	//flatfile is one indexed, position starts at 1
 	Name        string `flatfile:"1,3"`
 	OpenDate    string `flatfile:"4,10"`
 	Age         uint   `flatfile:"14,3"`
@@ -19,10 +19,10 @@ func main() {
 	data := []byte("AMY1900-01-01019123 FAKE STREETCA")
 
 	fileRecord := &CustomerRecord{}
-	ffparser.Examine(fileRecord)
+	flatfile.Examine(fileRecord)
 
 	//unmarhsal text data to struct
-	err := ffparser.Unmarshal(data, fileRecord, 0, 0)
+	err := flatfile.Unmarshal(data, fileRecord, 0, 0)
 	fmt.Printf("%v\n", fileRecord)
 
 	if err != nil {

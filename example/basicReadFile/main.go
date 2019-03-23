@@ -6,14 +6,14 @@ import (
 	"io"
 	"os"
 
-	"github.com/ahmedalhulaibi/ffparser"
+	"github.com/ahmedalhulaibi/flatfile"
 )
 
 // To run this example:
 // go run main.go
 
 type CustomerRecord struct {
-	//ffparser is one indexed, position starts at 1
+	//flatfile is one indexed, position starts at 1
 	Name        string `flatfile:"1,3"`
 	OpenDate    string `flatfile:"4,10"`
 	Age         uint   `flatfile:"14,3"`
@@ -36,7 +36,7 @@ func main() {
 		} else {
 			fileRecord := &CustomerRecord{}
 			//unmarhsal text data to struct
-			err := ffparser.Unmarshal(data, fileRecord, 0, 0)
+			err := flatfile.Unmarshal(data, fileRecord, 0, 0)
 			fmt.Printf("%v\n", fileRecord)
 			checkError(err)
 		}

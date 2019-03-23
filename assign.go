@@ -1,4 +1,4 @@
-package ffparser
+package flatfile
 
 import (
 	"reflect"
@@ -72,7 +72,7 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 		}
 	case reflect.Slice:
 		if ffpTag.occurs < 1 {
-			err = errors.Errorf("ffparser.assignBasedOnKind: Occurs clause must be provided when using slice. `flatfile:\"col,len,occurs\"`")
+			err = errors.Errorf("flatfile.assignBasedOnKind: Occurs clause must be provided when using slice. `flatfile:\"col,len,occurs\"`")
 		}
 		//make slice of length ffpTag.occurs to avoid index out of range err
 		field.Set(reflect.MakeSlice(field.Type(), ffpTag.occurs, ffpTag.occurs))
@@ -83,7 +83,7 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 			assignBasedOnKind(field.Type().Elem().Kind(), field.Index(i), fieldData[lowerBound:upperBound], ffpTag)
 		}
 	}
-	return errors.Wrap(err, "ffparser.assignBasedOnKind: AssignmentError")
+	return errors.Wrap(err, "flatfile.assignBasedOnKind: AssignmentError")
 }
 
 func assignBool(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -93,7 +93,7 @@ func assignBool(kind reflect.Kind, field reflect.Value, fieldData []byte) error 
 		field.Set(reflect.ValueOf(newFieldVal))
 	}
 
-	return errors.Wrap(err, "ffparser.assignBool error")
+	return errors.Wrap(err, "flatfile.assignBool error")
 }
 
 func assignUint(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -105,27 +105,27 @@ func assignUint(kind reflect.Kind, field reflect.Value, fieldData []byte) error 
 		if err == nil {
 			field.Set(reflect.ValueOf(uint(newFieldVal)))
 		}
-		return errors.Wrap(err, "ffparser.assignUint error")
+		return errors.Wrap(err, "flatfile.assignUint error")
 	case 2:
 		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 16)
 		if err == nil {
 			field.Set(reflect.ValueOf(uint(newFieldVal)))
 		}
-		return errors.Wrap(err, "ffparser.assignUint error")
+		return errors.Wrap(err, "flatfile.assignUint error")
 	case 4:
 		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 32)
 		if err == nil {
 			field.Set(reflect.ValueOf(uint(newFieldVal)))
 		}
-		return errors.Wrap(err, "ffparser.assignUint error")
+		return errors.Wrap(err, "flatfile.assignUint error")
 	case 8:
 		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 64)
 		if err == nil {
 			field.Set(reflect.ValueOf(uint(newFieldVal)))
 		}
-		return errors.Wrap(err, "ffparser.assignUint error")
+		return errors.Wrap(err, "flatfile.assignUint error")
 	}
-	return errors.Errorf("ffparser.assignUint: Failed to assignUint %v ", field)
+	return errors.Errorf("flatfile.assignUint: Failed to assignUint %v ", field)
 }
 
 func assignUint8(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -133,7 +133,7 @@ func assignUint8(kind reflect.Kind, field reflect.Value, fieldData []byte) error
 	if err == nil {
 		field.Set(reflect.ValueOf(uint8(newFieldVal)))
 	}
-	return errors.Wrap(err, "ffparser.assignUint8 error")
+	return errors.Wrap(err, "flatfile.assignUint8 error")
 }
 
 func assignUint16(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -141,7 +141,7 @@ func assignUint16(kind reflect.Kind, field reflect.Value, fieldData []byte) erro
 	if err == nil {
 		field.Set(reflect.ValueOf(uint16(newFieldVal)))
 	}
-	return errors.Wrap(err, "ffparser.assignUint16 error")
+	return errors.Wrap(err, "flatfile.assignUint16 error")
 }
 
 func assignUint32(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -149,7 +149,7 @@ func assignUint32(kind reflect.Kind, field reflect.Value, fieldData []byte) erro
 	if err == nil {
 		field.Set(reflect.ValueOf(uint32(newFieldVal)))
 	}
-	return errors.Wrap(err, "ffparser.assignUint32 error")
+	return errors.Wrap(err, "flatfile.assignUint32 error")
 }
 
 func assignUint64(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -157,7 +157,7 @@ func assignUint64(kind reflect.Kind, field reflect.Value, fieldData []byte) erro
 	if err == nil {
 		field.Set(reflect.ValueOf(newFieldVal))
 	}
-	return errors.Wrap(err, "ffparser.assignUint64 error")
+	return errors.Wrap(err, "flatfile.assignUint64 error")
 }
 
 func assignInt(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -169,27 +169,27 @@ func assignInt(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
 		if err == nil {
 			field.Set(reflect.ValueOf(int(newFieldVal)))
 		}
-		return errors.Wrap(err, "ffparser.assignInt error")
+		return errors.Wrap(err, "flatfile.assignInt error")
 	case 2:
 		newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 16)
 		if err == nil {
 			field.Set(reflect.ValueOf(int(newFieldVal)))
 		}
-		return errors.Wrap(err, "ffparser.assignInt error")
+		return errors.Wrap(err, "flatfile.assignInt error")
 	case 4:
 		newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 32)
 		if err == nil {
 			field.Set(reflect.ValueOf(int(newFieldVal)))
 		}
-		return errors.Wrap(err, "ffparser.assignInt error")
+		return errors.Wrap(err, "flatfile.assignInt error")
 	case 8:
 		newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 64)
 		if err == nil {
 			field.Set(reflect.ValueOf(int(newFieldVal)))
 		}
-		return errors.Wrap(err, "ffparser.assignInt error")
+		return errors.Wrap(err, "flatfile.assignInt error")
 	}
-	return errors.Errorf("ffparser.assignInt: Failed to assignInt %v ", field)
+	return errors.Errorf("flatfile.assignInt: Failed to assignInt %v ", field)
 }
 
 func assignInt8(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -197,7 +197,7 @@ func assignInt8(kind reflect.Kind, field reflect.Value, fieldData []byte) error 
 	if err == nil {
 		field.Set(reflect.ValueOf(int8(newFieldVal)))
 	}
-	return errors.Wrap(err, "ffparser.assignInt8 error")
+	return errors.Wrap(err, "flatfile.assignInt8 error")
 }
 
 func assignInt16(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -205,7 +205,7 @@ func assignInt16(kind reflect.Kind, field reflect.Value, fieldData []byte) error
 	if err == nil {
 		field.Set(reflect.ValueOf(int16(newFieldVal)))
 	}
-	return errors.Wrap(err, "ffparser.assignInt16 error")
+	return errors.Wrap(err, "flatfile.assignInt16 error")
 }
 
 func assignInt32(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -213,7 +213,7 @@ func assignInt32(kind reflect.Kind, field reflect.Value, fieldData []byte) error
 	if err == nil {
 		field.Set(reflect.ValueOf(int32(newFieldVal)))
 	}
-	return errors.Wrap(err, "ffparser.assignInt32 error")
+	return errors.Wrap(err, "flatfile.assignInt32 error")
 }
 
 func assignInt64(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -221,7 +221,7 @@ func assignInt64(kind reflect.Kind, field reflect.Value, fieldData []byte) error
 	if err == nil {
 		field.Set(reflect.ValueOf(int64(newFieldVal)))
 	}
-	return errors.Wrap(err, "ffparser.assignInt64 error")
+	return errors.Wrap(err, "flatfile.assignInt64 error")
 }
 
 func assignFloat32(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -229,7 +229,7 @@ func assignFloat32(kind reflect.Kind, field reflect.Value, fieldData []byte) err
 	if err == nil {
 		field.Set(reflect.ValueOf(float32(newFieldVal)))
 	}
-	return errors.Wrap(err, "ffparser.assignFloat32 error")
+	return errors.Wrap(err, "flatfile.assignFloat32 error")
 }
 
 func assignFloat64(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -237,7 +237,7 @@ func assignFloat64(kind reflect.Kind, field reflect.Value, fieldData []byte) err
 	if err == nil {
 		field.Set(reflect.ValueOf(newFieldVal))
 	}
-	return errors.Wrap(err, "ffparser.assignFloat64 error")
+	return errors.Wrap(err, "flatfile.assignFloat64 error")
 }
 
 func assignByte(field reflect.Value, fieldData byte) error {
@@ -248,7 +248,7 @@ func assignByte(field reflect.Value, fieldData byte) error {
 func assignRune(field reflect.Value, fieldData []byte) error {
 	newFieldVal, _ := utf8.DecodeRune(fieldData)
 	if newFieldVal == utf8.RuneError {
-		return errors.New("ffparser.assignRune error")
+		return errors.New("flatfile.assignRune error")
 	}
 	field.Set(reflect.ValueOf(newFieldVal))
 	return nil

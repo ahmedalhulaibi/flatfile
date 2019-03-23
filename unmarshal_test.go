@@ -1,4 +1,4 @@
-package ffparser
+package flatfile
 
 import (
 	"bytes"

@@ -13,6 +13,7 @@ GIT_ROOT=$(git rev-parse --show-toplevel)
 cd $GIT_ROOT/example
 echo $GIT_ROOT
 for example_dir in *; do
+    if [ -d $GIT_ROOT/example/$example_dir ]; then
     cd $GIT_ROOT/example/$example_dir
     case "$example_dir" in
         "bufferedReadFile")
@@ -31,4 +32,5 @@ for example_dir in *; do
             ;;
     esac
     echo "================================================="
+    fi
 done

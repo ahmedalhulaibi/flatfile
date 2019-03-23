@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/ahmedalhulaibi/ffparser"
+	"github.com/ahmedalhulaibi/flatfile"
 )
 
 // To run this example:
@@ -21,7 +21,7 @@ type CustomerAddress struct {
 }
 
 type CustomerRecord struct {
-	//ffparser is one indexed, position starts at 1
+	//flatfile is one indexed, position starts at 1
 	Demographics CustomerDemographic `flatfile:"1,16"`
 	Address      CustomerAddress     `flatfile:"17,17"` //Nested struct. Define the address field range. Within the CustomerAddress struct, ffp tags should start at 1
 }
@@ -30,10 +30,10 @@ func main() {
 	data := []byte("AMY1900-01-01019123 FAKE STREETCA")
 
 	fileRecord := &CustomerRecord{}
-	ffparser.Examine(fileRecord)
+	flatfile.Examine(fileRecord)
 
 	//unmarhsal text data to struct
-	err := ffparser.Unmarshal(data, fileRecord, 0, 0)
+	err := flatfile.Unmarshal(data, fileRecord, 0, 0)
 	fmt.Printf("%v\n", fileRecord)
 
 	if err != nil {

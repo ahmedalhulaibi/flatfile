@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/ahmedalhulaibi/ffparser"
+	"github.com/ahmedalhulaibi/flatfile"
 )
 
 // To run this example:
@@ -15,7 +15,7 @@ import (
 //       or
 // go run main.go 2
 type CustomerRecord struct {
-	//ffparser is one indexed, position starts at 1
+	//flatfile is one indexed, position starts at 1
 	Name        string `flatfile:"1,3"`
 	OpenDate    string `flatfile:"4,10"`
 	Age         uint   `flatfile:"14,3"`
@@ -33,7 +33,7 @@ func main() {
 
 	endOfFile := false
 
-	//To read in the data and marshal using ffparser, there are 2 options
+	//To read in the data and marshal using flatfile, there are 2 options
 	option, argErr := strconv.ParseInt(os.Args[1], 10, 64)
 	checkError(argErr)
 
@@ -48,7 +48,7 @@ func main() {
 			if !endOfFile {
 				if !isPrefix {
 					fileRecord := &CustomerRecord{}
-					err := ffparser.Unmarshal(dataBuffer, fileRecord, 0, 0)
+					err := flatfile.Unmarshal(dataBuffer, fileRecord, 0, 0)
 					fmt.Printf("Unmarshalled: %v\n", fileRecord)
 					checkError(err)
 					dataBuffer = []byte("")
@@ -75,12 +75,12 @@ func main() {
 
 			//determine how many fields can be unmarshalled
 			// store any data from dataBuffer that would not be unmarshalled
-			numFields, remainder, err = ffparser.CalcNumFieldsToUnmarshal(dataBuffer, fileRecord, startFieldIndex)
+			numFields, remainder, err = flatfile.CalcNumFieldsToUnmarshal(dataBuffer, fileRecord, startFieldIndex)
 			checkError(err)
 
 			//if we're not at the eof and we can marshal fields using the data in our data buffer
 			if !endOfFile && numFields > 0 {
-				err := ffparser.Unmarshal(dataBuffer, fileRecord, startFieldIndex, numFields)
+				err := flatfile.Unmarshal(dataBuffer, fileRecord, startFieldIndex, numFields)
 
 				//increment start field index
 				startFieldIndex += numFields

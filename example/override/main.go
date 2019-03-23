@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/ahmedalhulaibi/ffparser"
+	"github.com/ahmedalhulaibi/flatfile"
 )
 
 type CustomerRecord struct {
-	//ffparser is one indexed, position starts at 1
+	//flatfile is one indexed, position starts at 1
 	//override option has to be supplied to convert byte/rune correctly
 	FirstInitial     byte   `flatfile:"col=1,len=1,override=byte"`
 	FirstInitialRune rune   `flatfile:"col=1,len=1,override=rune"`
@@ -30,9 +30,9 @@ func main() {
 	data := []byte("AMY1900-01-01019123 FAKE STREETCA41611122229053334444")
 
 	fileRecord := &CustomerRecord{}
-	ffparser.Examine(fileRecord)
+	flatfile.Examine(fileRecord)
 
-	err := ffparser.Unmarshal(data, fileRecord, 0, 0)
+	err := flatfile.Unmarshal(data, fileRecord, 0, 0)
 	fmt.Printf("%v\n", fileRecord)
 
 	if err != nil {

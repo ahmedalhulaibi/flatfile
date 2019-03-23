@@ -1,4 +1,4 @@
-# ffparser
+# flatfile
 
 The purpose of this package is provide a utility to read a record from a structured [flat-file database](https://en.wikipedia.org/wiki/Flat-file_database) or a record from a text file into a struct. The intent is to eliminate boilerplate code for reading data from a flat file and mapping it to the fields in a struct.
 
@@ -10,11 +10,11 @@ This library provides a method `Unmarshal` which will convert a record (slice of
 
 Use your favourite dependency tool to pull the code. dep, go mod, etc. Or use go get.
 
-`go get github.com/ahmedalhulaibi/ffparser`
+`go get github.com/ahmedalhulaibi/flatfile`
 
 ## Examples
 
-Please refer to [examples](https://github.com/ahmedalhulaibi/ffparser/tree/master/example) folder in repo for all examples.
+Please refer to [examples](https://github.com/ahmedalhulaibi/flatfile/tree/master/example) folder in repo for all examples.
 
 Let's say I have a text file `customers.txt` which contains customer data. There are 2 records:
 
@@ -40,7 +40,7 @@ I can directly translate these to fields in a struct:
 
 ```go
 type CustomerRecord struct {
-    //ffparser is one indexed, column starts at 1
+    //flatfile is one indexed, column starts at 1
     Name        string `flatfile:"1,3"`
     OpenDate    string `flatfile:"4,10"`
     Age         uint   `flatfile:"14,3"`
@@ -54,7 +54,7 @@ Once your layout is defined we can read a line from a file and unmarshal the dat
 
 ```go
 type CustomerRecord struct {
-	//ffparser is one indexed, column starts at 1
+	//flatfile is one indexed, column starts at 1
 	Name        string `flatfile:"1,3"`
 	OpenDate    string `flatfile:"4,10"`
 	Age         uint   `flatfile:"14,3"`
@@ -77,7 +77,7 @@ func main() {
 		} else {
 			fileRecord := &CustomerRecord{}
             //unmarhsal text data to struct
-			err := ffparser.Unmarshal(data, fileRecord, 0, 0)
+			err := flatfile.Unmarshal(data, fileRecord, 0, 0)
 			fmt.Printf("%v\n", fileRecord)
 			checkError(err)
 		}
@@ -130,7 +130,7 @@ func checkError(err error) {
 
 - [x] Slice, Array support AKA Emulate [COBOL occurs clause](https://www.ibm.com/support/knowledgecenter/en/SS6SG3_4.2.0/com.ibm.entcobol.doc_4.2/PGandLR/tasks/tptbl03.htm)
 
-- [x] Offset feature to support reading long lines of data. [Example](https://github.com/ahmedalhulaibi/ffparser/tree/master/example/bufferedReadFile)
+- [x] Offset feature to support reading long lines of data. [Example](https://github.com/ahmedalhulaibi/flatfile/tree/master/example/bufferedReadFile)
 
 - [x] Byte and Rune support using type override. 
 
