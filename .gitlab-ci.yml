@@ -2,3 +2,4 @@ test:
   image: golang:1.12
   script:
     - go test -v
+    - sh runExamples.sh
