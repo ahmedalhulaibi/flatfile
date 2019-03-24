@@ -318,10 +318,10 @@ func TestUint64OutOfRangeErr_Unmarshal(t *testing.T) {
 
 func TestUint_Unmarshal(t *testing.T) {
 	type UintStruct struct {
-		Uint8val  uint8  `flatfile:"1,1"`
-		Uint16val uint16 `flatfile:"2,5"`
-		Uint32val uint32 `flatfile:"2,10"`
-		Uint64val uint64 `flatfile:"2,20"`
+		Uint8val  uint `flatfile:"1,1"`
+		Uint16val uint `flatfile:"2,5"`
+		Uint32val uint `flatfile:"2,10"`
+		Uint64val uint `flatfile:"2,20"`
 	}
 
 	testVal := &UintStruct{}
@@ -557,6 +557,29 @@ func TestInt64OutOfRangeErr_Unmarshal(t *testing.T) {
 	}
 	t.Log(testVal)
 	t.Log(err)
+}
+
+func TestInt_Unmarshal(t *testing.T) {
+	type IntStruct struct {
+		Int8val  int `flatfile:"1,1"`
+		Int16val int `flatfile:"2,5"`
+		Int32val int `flatfile:"2,9"`
+		Int64val int `flatfile:"1,19"`
+	}
+
+	testVal := &IntStruct{}
+	data := []byte("9223372036854775807")
+
+	err := Unmarshal(data, testVal, 0, 0)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if testVal.Int8val != 9 || testVal.Int16val != 22337 || testVal.Int32val != 223372036 || testVal.Int64val != 9223372036854775807 {
+		t.Log(testVal)
+		t.Fail()
+	}
 }
 
 func TestFloat32_Unmarshal(t *testing.T) {
