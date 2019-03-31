@@ -32,7 +32,7 @@ func TestBoolFalse_Unmarshal(t *testing.T) {
 	testVal := &BoolStruct{}
 	data := []byte("0fFfalseFalseFALSE")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -60,7 +60,7 @@ func TestBoolTrue_Unmarshal(t *testing.T) {
 	testVal := &BoolStruct{}
 	data := []byte("1tTtrueTrueTRUE")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -88,7 +88,7 @@ func TestBoolErr_Unmarshal(t *testing.T) {
 	testVal := &BoolStruct{}
 	data := []byte("3aBerrrErrrERRR")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse bool")
@@ -105,7 +105,7 @@ func TestUint8_Unmarshal(t *testing.T) {
 	testVal := &Uint8Struct{}
 	data := []byte("1255")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -125,7 +125,7 @@ func TestUint8InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &Uint8Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint8")
@@ -142,7 +142,7 @@ func TestUint8OutOfRangeErr_Unmarshal(t *testing.T) {
 	testVal := &Uint8Struct{}
 	data := []byte("2555")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint8")
@@ -160,7 +160,7 @@ func TestUint16_Unmarshal(t *testing.T) {
 	testVal := &Uint16Struct{}
 	data := []byte("165535")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -180,7 +180,7 @@ func TestUint16InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &Uint16Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint16")
@@ -197,7 +197,7 @@ func TestUint16OutOfRangeErr_Unmarshal(t *testing.T) {
 	testVal := &Uint16Struct{}
 	data := []byte("99999")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint16")
@@ -215,7 +215,7 @@ func TestUint32_Unmarshal(t *testing.T) {
 	testVal := &Uint32Struct{}
 	data := []byte("14294967295")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -235,7 +235,7 @@ func TestUint32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &Uint32Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint32")
@@ -252,7 +252,7 @@ func TestUint32OutOfRangeErr_Unmarshal(t *testing.T) {
 	testVal := &Uint32Struct{}
 	data := []byte("9999999999")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint32")
@@ -270,7 +270,7 @@ func TestUint64_Unmarshal(t *testing.T) {
 	testVal := &Uint64Struct{}
 	data := []byte("118446744073709551615")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -290,7 +290,7 @@ func TestUint64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &Uint64Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint64")
@@ -307,7 +307,7 @@ func TestUint64OutOfRangeErr_Unmarshal(t *testing.T) {
 	testVal := &Uint64Struct{}
 	data := []byte("99999999999999999999")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse uint64")
@@ -327,7 +327,7 @@ func TestUint_Unmarshal(t *testing.T) {
 	testVal := &UintStruct{}
 	data := []byte("118446744073709551615")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -348,7 +348,7 @@ func TestInt8_Unmarshal(t *testing.T) {
 	testVal := &Int8Struct{}
 	data := []byte("-128127")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -368,7 +368,7 @@ func TestInt8InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &Int8Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int8")
@@ -385,7 +385,7 @@ func TestInt8OutOfRangeErr_Unmarshal(t *testing.T) {
 	testVal := &Int8Struct{}
 	data := []byte("2555")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int8")
@@ -403,7 +403,7 @@ func TestInt16_Unmarshal(t *testing.T) {
 	testVal := &Int16Struct{}
 	data := []byte("-3276832767")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -423,7 +423,7 @@ func TestInt16InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &Int16Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int16")
@@ -440,7 +440,7 @@ func TestInt16OutOfRangeErr_Unmarshal(t *testing.T) {
 	testVal := &Int16Struct{}
 	data := []byte("99999")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int16")
@@ -458,7 +458,7 @@ func TestInt32_Unmarshal(t *testing.T) {
 	testVal := &Int32Struct{}
 	data := []byte("-21474836482147483647")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -478,7 +478,7 @@ func TestInt32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &Int32Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int32")
@@ -495,7 +495,7 @@ func TestInt32OutOfRangeErr_Unmarshal(t *testing.T) {
 	testVal := &Int32Struct{}
 	data := []byte("9999999999")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int32")
@@ -513,7 +513,7 @@ func TestInt64_Unmarshal(t *testing.T) {
 	testVal := &Int64Struct{}
 	data := []byte("-92233720368547758089223372036854775807")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -533,7 +533,7 @@ func TestInt64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &Int64Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int64")
@@ -550,7 +550,7 @@ func TestInt64OutOfRangeErr_Unmarshal(t *testing.T) {
 	testVal := &Int64Struct{}
 	data := []byte("9999999999999999999")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse int64")
@@ -570,7 +570,7 @@ func TestInt_Unmarshal(t *testing.T) {
 	testVal := &IntStruct{}
 	data := []byte("9223372036854775807")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -591,7 +591,7 @@ func TestFloat32_Unmarshal(t *testing.T) {
 	testVal := &Float32Struct{}
 	data := []byte("3.4028234663852886e+381.401298464324817e-45")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -611,7 +611,7 @@ func TestFloat32InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &Float32Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse Float32")
@@ -628,7 +628,7 @@ func TestFloat32OutOfRangeErr_Unmarshal(t *testing.T) {
 	testVal := &Float32Struct{}
 	data := []byte("9999999999999999999999999999999999999999")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse Float32")
@@ -646,7 +646,7 @@ func TestFloat64_Unmarshal(t *testing.T) {
 	testVal := &Float64Struct{}
 	data := []byte("1.7976931348623157e+3085e-324")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Error(err)
@@ -666,7 +666,7 @@ func TestFloat64InvalidSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &Float64Struct{}
 	data := []byte("$")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse Float64")
@@ -683,7 +683,7 @@ func TestFloat64OutOfRangeErr_Unmarshal(t *testing.T) {
 	testVal := &Float64Struct{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return error when failing to parse Float64")
@@ -700,7 +700,7 @@ func TestFfpTagParsePosSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &FfpTest{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return syntax error when failing to parse position param")
@@ -717,7 +717,7 @@ func TestFfpTagParseLenSyntaxErr_Unmarshal(t *testing.T) {
 	testVal := &FfpTest{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return syntax error when failing to parse length param")
@@ -734,7 +734,7 @@ func TestFfpTagParsePosRangeErr_Unmarshal(t *testing.T) {
 	testVal := &FfpTest{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return out of range error when failing to parse position param")
@@ -751,7 +751,7 @@ func TestFfpTagParseLenRangeErr_Unmarshal(t *testing.T) {
 	testVal := &FfpTest{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return out of range error when failing to parse length param")
@@ -768,7 +768,7 @@ func TestFfpTagParseMissingParamErr_Unmarshal(t *testing.T) {
 	testVal := &FfpTest{}
 	data := []byte("2.7976931348623157e+308")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err == nil {
 		t.Error("Unmarshal should return missing parameter error")
@@ -790,7 +790,7 @@ func TestArrayParse(t *testing.T) {
 
 	data := []byte("11223344AMYBOBCAMDANEDDFAEGUYHIMIGGJAY")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Log(err)
@@ -813,7 +813,7 @@ func TestArrayParse(t *testing.T) {
 
 func TestArrayNestedStructParse(t *testing.T) {
 	type Name struct {
-		NameData string `flatfile:"1,3"`
+		NameData string `flatfile:"2,2"`
 	}
 	type FfpTest struct {
 		Names [3]Name `flatfile:"1,3"`
@@ -821,11 +821,11 @@ func TestArrayNestedStructParse(t *testing.T) {
 
 	testVal := &FfpTest{}
 
-	expectedNames := [3]Name{Name{NameData: "AMY"}, Name{NameData: "BOB"}, Name{NameData: "CAM"}}
+	expectedNames := [3]Name{Name{NameData: "MY"}, Name{NameData: "OB"}, Name{NameData: "AM"}}
 
 	data := []byte("AMYBOBCAM")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Log(err)
@@ -853,7 +853,7 @@ func TestSliceParse(t *testing.T) {
 
 	data := []byte("11223344AMYBOBCAMDANEDDFAEGUYHIMIGGJAY")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Log(err)
@@ -879,7 +879,7 @@ func TestSliceParse(t *testing.T) {
 
 func TestSliceNestedStructParse(t *testing.T) {
 	type Name struct {
-		NameData string `flatfile:"1,3"`
+		NameData string `flatfile:"2,2"`
 	}
 	type FfpTest struct {
 		Names []Name `flatfile:"1,3,3"`
@@ -887,11 +887,11 @@ func TestSliceNestedStructParse(t *testing.T) {
 
 	testVal := &FfpTest{}
 
-	expectedNames := [3]Name{Name{NameData: "AMY"}, Name{NameData: "BOB"}, Name{NameData: "CAM"}}
+	expectedNames := [3]Name{Name{NameData: "MY"}, Name{NameData: "OB"}, Name{NameData: "AM"}}
 
 	data := []byte("AMYBOBCAM")
 
-	err := Unmarshal(data, testVal, 0, 0)
+	err := Unmarshal(data, testVal, 0, 0, false)
 
 	if err != nil {
 		t.Log(err)
@@ -921,7 +921,7 @@ func TestOffsetParse(t *testing.T) {
 	data := [][]byte{[]byte("AMY"), []byte("123"), []byte("CAD")}
 
 	for idx, dataval := range data {
-		err := Unmarshal(dataval, testVal, idx, 0)
+		err := Unmarshal(dataval, testVal, idx, 0, true)
 		t.Log(testVal)
 		if err != nil {
 			t.Log(err)
@@ -936,7 +936,7 @@ func TestOffsetParse(t *testing.T) {
 	}
 }
 
-func TestCalcNumFieldsToMarshal(t *testing.T) {
+func TestCalcNumFieldsToUnmarshal(t *testing.T) {
 	type Profile struct {
 		NameData string `flatfile:"1,9"`
 		Age      int    `flatfile:"10,2"`
@@ -956,19 +956,19 @@ func TestCalcNumFieldsToMarshal(t *testing.T) {
 	}
 
 	for idx, tt := range tests {
-		testName := fmt.Sprintf("CalcNumFieldsToMarshal-%d", idx)
+		testName := fmt.Sprintf("CalcNumFieldsToUnmarshal-%d", idx)
 		t.Run(testName, func(t *testing.T) {
 			got, _, err := CalcNumFieldsToUnmarshal(tt.Record, tt.MyProfile, tt.IndexOffset)
 			if err != nil {
-				t.Errorf("CalcNumFieldsToMarshal(%v,%v,%d) got: %d want: %d err: %s", tt.Record, tt.MyProfile, tt.IndexOffset, got, tt.Want, err)
+				t.Errorf("CalcNumFieldsToUnmarshal(%v,%v,%d) got: %d want: %d err: %s", tt.Record, tt.MyProfile, tt.IndexOffset, got, tt.Want, err)
 			}
 			if got != tt.Want {
-				t.Errorf("CalcNumFieldsToMarshal(%v,%v,%d) got: %d want: %d", tt.Record, tt.MyProfile, tt.IndexOffset, got, tt.Want)
+				t.Errorf("CalcNumFieldsToUnmarshal(%v,%v,%d) got: %d want: %d", tt.Record, tt.MyProfile, tt.IndexOffset, got, tt.Want)
 			}
 		})
 	}
 }
-func TestCalcNumFieldsToMarshalRemainder(t *testing.T) {
+func TestCalcNumFieldsToUnmarshalRemainder(t *testing.T) {
 	type Profile struct {
 		NameData string `flatfile:"1,9"`
 		Age      int    `flatfile:"10,2"`
@@ -988,14 +988,14 @@ func TestCalcNumFieldsToMarshalRemainder(t *testing.T) {
 	}
 
 	for idx, tt := range tests {
-		testName := fmt.Sprintf("CalcNumFieldsToMarshalRemainder-%d", idx)
+		testName := fmt.Sprintf("CalcNumFieldsToUnmarshalRemainder-%d", idx)
 		t.Run(testName, func(t *testing.T) {
 			_, got, err := CalcNumFieldsToUnmarshal(tt.Record, tt.MyProfile, tt.IndexOffset)
 			if err != nil {
 				t.Errorf("err: %s", err)
 			}
 			if !bytes.Equal(got, tt.Want) {
-				t.Errorf("CalcNumFieldsToMarshalRemainder(%s,%v,%d) got: %s want: %s", string(tt.Record), tt.MyProfile, tt.IndexOffset, string(got), string(tt.Want))
+				t.Errorf("CalcNumFieldsToUnmarshalRemainder(%s,%v,%d) got: %s want: %s", string(tt.Record), tt.MyProfile, tt.IndexOffset, string(got), string(tt.Want))
 			}
 		})
 	}
@@ -1022,7 +1022,7 @@ func TestByte_Unmarshal(t *testing.T) {
 	for idx, tt := range tests {
 		testName := fmt.Sprintf("TestByte_Unmarshal-%d", idx)
 		t.Run(testName, func(t *testing.T) {
-			err := Unmarshal(tt.Record, &tt.ByteSt, 0, 0)
+			err := Unmarshal(tt.Record, &tt.ByteSt, 0, 0, false)
 			if err != nil {
 				t.Errorf("err: %s", err)
 			}
@@ -1054,7 +1054,7 @@ func TestRune_Unmarshal(t *testing.T) {
 	for idx, tt := range tests {
 		testName := fmt.Sprintf("TestRune_Unmarshal-%d", idx)
 		t.Run(testName, func(t *testing.T) {
-			err := Unmarshal(tt.Record, &tt.RuneSt, 0, 0)
+			err := Unmarshal(tt.Record, &tt.RuneSt, 0, 0, false)
 			if err != nil {
 				t.Errorf("err: %s", err)
 			}
@@ -1062,6 +1062,121 @@ func TestRune_Unmarshal(t *testing.T) {
 				t.Errorf("Unmarshal(%s,%v,0,0) got: %v want: %v", string(tt.Record), tt.RuneSt, tt.RuneSt, tt.Want)
 			} else {
 				t.Logf("Unmarshal(%s,%v,0,0) got: %v want: %v", string(tt.Record), tt.RuneSt, tt.RuneSt, tt.Want)
+			}
+		})
+	}
+}
+
+func TestStartFieldIdx_Unmarshal(t *testing.T) {
+	type ByteStruct struct {
+		ByteOne byte `flatfile:"1,1,override=byte"`
+		ByteTwo byte `flatfile:"2,1,override=byte"`
+	}
+
+	var tests = []struct {
+		ByteSt ByteStruct
+		Record []byte
+		Want   ByteStruct
+	}{
+		{ByteStruct{}, []byte("1134567891"), ByteStruct{ByteTwo: byte('1')}},
+		{ByteStruct{}, []byte("a1345678910"), ByteStruct{ByteTwo: byte('1')}},
+		{ByteStruct{}, []byte("a2"), ByteStruct{ByteTwo: byte('2')}},
+		{ByteStruct{}, []byte("/a"), ByteStruct{ByteTwo: byte('a')}},
+		{ByteStruct{}, []byte("?1"), ByteStruct{ByteTwo: byte('1')}},
+	}
+
+	for idx, tt := range tests {
+		testName := fmt.Sprintf("TestByte_Unmarshal-%d", idx)
+		t.Run(testName, func(t *testing.T) {
+			err := Unmarshal(tt.Record, &tt.ByteSt, 1, 0, false)
+			if err != nil {
+				t.Errorf("err: %s", err)
+			}
+			if tt.ByteSt != tt.Want {
+				t.Errorf("Unmarshal(%s,%v,0,0) data: %v got: %v want: %v", string(tt.Record), tt.Record, tt.ByteSt, tt.ByteSt, tt.Want)
+			}
+		})
+	}
+}
+
+func TestNotAPointerErr_Umarshal(t *testing.T) {
+
+	type FfpTest struct {
+		TestVal string `flatfile:"1,1"`
+	}
+
+	testVal := FfpTest{}
+	data := []byte("2")
+
+	err := Unmarshal(data, testVal, 0, 0, false)
+
+	if err == nil {
+		t.Error("Unmarshal should return not a pointer error when attempting to unmarshal non-pointer type")
+	}
+	t.Log(testVal)
+	t.Log(err)
+}
+
+func TestNestedPointer_Unmarshal(t *testing.T) {
+	type NestedStruct struct {
+		ByteOne *int `flatfile:"1,1"`
+	}
+
+	type ByteStruct struct {
+		NestedData *NestedStruct `flatfile:"1,1"`
+	}
+
+	var wantByte int
+	wantByte = int(1)
+
+	initByte := int(0)
+	var GotByte *int
+	GotByte = &initByte
+	var tests = []struct {
+		ByteSt ByteStruct
+		Record []byte
+		Want   ByteStruct
+	}{
+		{ByteStruct{NestedData: &NestedStruct{ByteOne: GotByte}}, []byte("1134567891"), ByteStruct{NestedData: &NestedStruct{ByteOne: &wantByte}}},
+	}
+
+	for idx, tt := range tests {
+		testName := fmt.Sprintf("TestByte_Unmarshal-%d", idx)
+		t.Run(testName, func(t *testing.T) {
+			err := Unmarshal(tt.Record, &tt.ByteSt, 0, 0, false)
+			if err != nil {
+				t.Errorf("err: %s", err)
+			}
+			if *tt.ByteSt.NestedData.ByteOne != *tt.Want.NestedData.ByteOne {
+				t.Errorf("Unmarshal(%s,0,0,false) data: %v got: %d want: %d", string(tt.Record), tt.Record, tt.ByteSt.NestedData.ByteOne, tt.Want.NestedData.ByteOne)
+			}
+		})
+	}
+}
+
+func TestShouldUnmarshal(t *testing.T) {
+
+	var tests = []struct {
+		ffTag  flatfileTag
+		Record []byte
+		Want   bool
+	}{
+		{flatfileTag{condCol: 1, condLen: 1, condVal: "1", condChk: true}, []byte("1134567891"), true},
+		{flatfileTag{condCol: 1, condLen: 1, condVal: "9", condChk: true}, []byte("1134567891"), false},
+		{flatfileTag{condCol: 4, condLen: 2, condVal: "45", condChk: true}, []byte("1134567891"), true},
+		{flatfileTag{condCol: 4, condLen: 7, condVal: "456789", condChk: true}, []byte("1134567891"), false},
+		{flatfileTag{condCol: 1, condLen: 1, condVal: "1", condChk: false}, []byte("1134567891"), true},
+		{flatfileTag{condCol: 1, condLen: 1, condVal: "9", condChk: false}, []byte("1134567891"), true},
+		{flatfileTag{condCol: 4, condLen: 2, condVal: "45", condChk: false}, []byte("1134567891"), true},
+		{flatfileTag{condCol: 4, condLen: 7, condVal: "456789", condChk: false}, []byte("1134567891"), true},
+	}
+
+	for idx, tt := range tests {
+		testName := fmt.Sprintf("TestByte_Unmarshal-%d", idx)
+		t.Run(testName, func(t *testing.T) {
+			result := ShouldUnmarshal(&tt.ffTag, tt.Record)
+			if result != tt.Want {
+				t.Errorf("ShouldUnmarshal(%#v, %s) got: %v want: %v", tt.ffTag, string(tt.Record), result, tt.Want)
 			}
 		})
 	}

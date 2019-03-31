@@ -54,14 +54,14 @@ func assignBasedOnKind(kind reflect.Kind, field reflect.Value, fieldData []byte,
 	case reflect.String:
 		field.Set(reflect.ValueOf(string(fieldData)))
 	case reflect.Struct:
-		err = Unmarshal(fieldData, field.Addr().Interface(), 0, 0)
+		err = Unmarshal(fieldData, field.Addr().Interface(), 0, 0, false)
 	case reflect.Ptr:
 		//If pointer to struct
 		if field.Elem().Kind() == reflect.Struct {
 			//Unmarshal struct
-			err = Unmarshal(fieldData, field.Interface(), 0, 0)
+			err = Unmarshal(fieldData, field.Interface(), 0, 0, false)
 		} else {
-			err = assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData[:], ffpTag)
+			err = assignBasedOnKind(field.Elem().Kind(), field.Elem(), fieldData, ffpTag)
 		}
 	case reflect.Array:
 		for i := 0; i < field.Len(); i++ {
@@ -97,35 +97,14 @@ func assignBool(kind reflect.Kind, field reflect.Value, fieldData []byte) error 
 }
 
 func assignUint(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
-	//Determine bitness using Sizeof
 	var dummy uint
-	switch unsafe.Sizeof(dummy) {
-	case 1:
-		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 8)
-		if err == nil {
-			field.Set(reflect.ValueOf(uint(newFieldVal)))
-		}
-		return errors.Wrap(err, "flatfile.assignUint error")
-	case 2:
-		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 16)
-		if err == nil {
-			field.Set(reflect.ValueOf(uint(newFieldVal)))
-		}
-		return errors.Wrap(err, "flatfile.assignUint error")
-	case 4:
-		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 32)
-		if err == nil {
-			field.Set(reflect.ValueOf(uint(newFieldVal)))
-		}
-		return errors.Wrap(err, "flatfile.assignUint error")
-	case 8:
-		newFieldVal, err := strconv.ParseUint(string(fieldData), 10, 64)
-		if err == nil {
-			field.Set(reflect.ValueOf(uint(newFieldVal)))
-		}
-		return errors.Wrap(err, "flatfile.assignUint error")
+	//Determine bitness using Sizeof
+	//this will return 1 for 8-bit, 2 for 16-bit, 4 for 32-bit, 8 for 64-bit. Multiply the result to get bitsize and convert to int for Parsing
+	newFieldVal, err := strconv.ParseUint(string(fieldData), 10, int(unsafe.Sizeof(dummy)*8))
+	if err == nil {
+		field.Set(reflect.ValueOf(uint(newFieldVal)))
 	}
-	return errors.Errorf("flatfile.assignUint: Failed to assignUint %v ", field)
+	return errors.Wrapf(err, "flatfile.assignUint: Failed to assignUint %v ", field)
 }
 
 func assignUint8(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
@@ -161,35 +140,14 @@ func assignUint64(kind reflect.Kind, field reflect.Value, fieldData []byte) erro
 }
 
 func assignInt(kind reflect.Kind, field reflect.Value, fieldData []byte) error {
-	//Determine bitness using Sizeof
 	var dummy int
-	switch unsafe.Sizeof(dummy) {
-	case 1:
-		newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 8)
-		if err == nil {
-			field.Set(reflect.ValueOf(int(newFieldVal)))
-		}
-		return errors.Wrap(err, "flatfile.assignInt error")
-	case 2:
-		newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 16)
-		if err == nil {
-			field.Set(reflect.ValueOf(int(newFieldVal)))
-		}
-		return errors.Wrap(err, "flatfile.assignInt error")
-	case 4:
-		newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 32)
-		if err == nil {
-			field.Set(reflect.ValueOf(int(newFieldVal)))
-		}
-		return errors.Wrap(err, "flatfile.assignInt error")
-	case 8:
-		newFieldVal, err := strconv.ParseInt(string(fieldData), 10, 64)
-		if err == nil {
-			field.Set(reflect.ValueOf(int(newFieldVal)))
-		}
-		return errors.Wrap(err, "flatfile.assignInt error")
+	//Determine bitness using Sizeof
+	//this will return 1 for 8-bit, 2 for 16-bit, 4 for 32-bit, 8 for 64-bit. Multiply the result to get bitsize and convert to int for Parsing
+	newFieldVal, err := strconv.ParseInt(string(fieldData), 10, int(unsafe.Sizeof(dummy)*8))
+	if err == nil {
+		field.Set(reflect.ValueOf(int(newFieldVal)))
 	}
-	return errors.Errorf("flatfile.assignInt: Failed to assignInt %v ", field)
+	return errors.Wrapf(err, "flatfile.assignInt: Failed to assignInt %v ", field)
 }
 
 func assignInt8(kind reflect.Kind, field reflect.Value, fieldData []byte) error {

@@ -12,18 +12,26 @@ type flatfileTag struct {
 	length   int
 	occurs   int
 	override string
+	condCol  int
+	condLen  int
+	condVal  string
+	condChk  bool
 }
 
 var parseFuncMap = map[string]func(string, *flatfileTag) error{
-	"col":      parseColumnOption,
-	"column":   parseColumnOption,
-	"len":      parseLengthOption,
-	"length":   parseLengthOption,
-	"occ":      parseOccursOption,
-	"occurs":   parseOccursOption,
-	"ovr":      parseOverrideOption,
-	"override": parseOverrideOption,
+	"col":       parseColumnOption,
+	"column":    parseColumnOption,
+	"len":       parseLengthOption,
+	"length":    parseLengthOption,
+	"occ":       parseOccursOption,
+	"occurs":    parseOccursOption,
+	"ovr":       parseOverrideOption,
+	"override":  parseOverrideOption,
+	"cond":      parseConditionOption,
+	"condition": parseConditionOption,
 }
+
+//condition=1-10-TENLETTERS
 
 //validOptions is a list of the keys loaded from parseFuncMap. This is used purely to display options to user
 var validOptions []string
@@ -52,7 +60,7 @@ func parseFlatfileTag(fieldTag string, ffpTag *flatfileTag) error {
 		//check whether or not tag is using named options
 		if strings.Contains(param, "=") {
 			options := strings.Split(param, "=")
-			if len(options) < 2 {
+			if len(options) != 2 {
 				return errors.Errorf("flatfile.parseFlatfileTag: Invalid formatting of named option '%v'\nNamed options should be in the form option=value\nValid options:%v", options, validOptions)
 			}
 			if funcVal, exists := parseFuncMap[options[0]]; exists {
@@ -71,6 +79,8 @@ func parseFlatfileTag(fieldTag string, ffpTag *flatfileTag) error {
 				err = parseOccursOption(param, ffpTag)
 			case 3:
 				err = parseOverrideOption(param, ffpTag)
+			case 4:
+				err = parseConditionOption(param, ffpTag)
 			}
 		}
 		if err != nil {
@@ -141,4 +151,29 @@ func isValidOverride(override string) bool {
 		return true
 	}
 	return false
+}
+
+func parseConditionOption(param string, ffpTag *flatfileTag) error {
+	condParams := strings.Split(param, "-")
+	if len(condParams) != 3 {
+		return errors.Errorf("flatfile.parseConditionOption: Expected 3 tag condition parameters but got %d options: %s", len(condParams), param)
+	}
+
+	condCol, colerr := strconv.Atoi(condParams[0])
+	if colerr != nil {
+		return errors.Wrapf(colerr, "flatfile.parseConditionOption: Error parsing tag condition col parameter %s", param)
+	}
+
+	condLen, lenerr := strconv.Atoi(condParams[1])
+	if lenerr != nil {
+		return errors.Wrapf(lenerr, "flatfile.parseConditionOption: Error parsing tag condition len parameter %s", param)
+	}
+
+	condVal := condParams[2]
+
+	ffpTag.condCol = condCol
+	ffpTag.condLen = condLen
+	ffpTag.condVal = condVal
+	ffpTag.condChk = true
+	return nil
 }
