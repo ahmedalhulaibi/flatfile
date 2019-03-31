@@ -1,6 +1,8 @@
 # flatfile
 
-![Pipeline](https://gitlab.com/ahmedalhulaibi/flatfile/badges/master/pipeline.svg)
+[![Pipeline](https://gitlab.com/ahmedalhulaibi/flatfile/badges/master/pipeline.svg)](https://gitlab.com/ahmedalhulaibi/flatfile/pipelines)[![codecov](https://codecov.io/gl/ahmedalhulaibi/flatfile/branch/master/graph/badge.svg)](https://codecov.io/gl/ahmedalhulaibi/flatfile)
+
+
 
 The purpose of this package is provide a utility to read a record from a structured [flat-file database](https://en.wikipedia.org/wiki/Flat-file_database) or a record from a text file into a struct. The intent is to eliminate boilerplate code for reading data from a flat file and mapping it to the fields in a struct.
 
