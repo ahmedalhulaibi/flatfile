@@ -32,7 +32,7 @@ func main() {
 	fileRecord := &CustomerRecord{}
 	flatfile.Examine(fileRecord)
 
-	err := flatfile.Unmarshal(data, fileRecord, 0, 0)
+	err := flatfile.Unmarshal(data, fileRecord, 0, 0, false)
 	fmt.Printf("%v\n", fileRecord)
 
 	if err != nil {

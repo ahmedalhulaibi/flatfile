@@ -36,7 +36,7 @@ func main() {
 		} else {
 			fileRecord := &CustomerRecord{}
 			//unmarhsal text data to struct
-			err := flatfile.Unmarshal(data, fileRecord, 0, 0)
+			err := flatfile.Unmarshal(data, fileRecord, 0, 0, false)
 			fmt.Printf("%v\n", fileRecord)
 			checkError(err)
 		}

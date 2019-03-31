@@ -33,7 +33,7 @@ func main() {
 
 	endOfFile := false
 
-	//To read in the data and marshal using flatfile, there are 2 options
+	//To read in the data and unmarshal using flatfile, there are 2 options
 	option, argErr := strconv.ParseInt(os.Args[1], 10, 64)
 	checkError(argErr)
 
@@ -48,7 +48,7 @@ func main() {
 			if !endOfFile {
 				if !isPrefix {
 					fileRecord := &CustomerRecord{}
-					err := flatfile.Unmarshal(dataBuffer, fileRecord, 0, 0)
+					err := flatfile.Unmarshal(dataBuffer, fileRecord, 0, 0, false)
 					fmt.Printf("Unmarshalled: %v\n", fileRecord)
 					checkError(err)
 					dataBuffer = []byte("")
@@ -78,9 +78,9 @@ func main() {
 			numFields, remainder, err = flatfile.CalcNumFieldsToUnmarshal(dataBuffer, fileRecord, startFieldIndex)
 			checkError(err)
 
-			//if we're not at the eof and we can marshal fields using the data in our data buffer
+			//if we're not at the eof and we can unmarshal fields using the data in our data buffer
 			if !endOfFile && numFields > 0 {
-				err := flatfile.Unmarshal(dataBuffer, fileRecord, startFieldIndex, numFields)
+				err := flatfile.Unmarshal(dataBuffer, fileRecord, startFieldIndex, numFields, true)
 
 				//increment start field index
 				startFieldIndex += numFields

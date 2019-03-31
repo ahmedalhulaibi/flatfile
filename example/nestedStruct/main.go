@@ -33,7 +33,7 @@ func main() {
 	flatfile.Examine(fileRecord)
 
 	//unmarhsal text data to struct
-	err := flatfile.Unmarshal(data, fileRecord, 0, 0)
+	err := flatfile.Unmarshal(data, fileRecord, 0, 0, false)
 	fmt.Printf("%v\n", fileRecord)
 
 	if err != nil {

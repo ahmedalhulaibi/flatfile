@@ -137,11 +137,13 @@ func checkError(err error) {
 - [x] Byte and Rune support using type override. 
 
     These are aliases for uint8 and int32 respectively. These require an override option to be supplied.
-## TODO:
-- [ ] Flat File abstraction
-- [ ] Support for conditional unmarshal 
+- [x] Flat File abstraction
+- [x] Support for conditional unmarshal 
     
     if field(col,len) == "text" do unmarshal else skip. 
+	This is done by supplying the `condition` option. The syntax is a bit funky:
+
+	`col-len-VALUE` e.g. `1-10-TENLETTERS` This means the unmarshal will only occur if the data from column 1, length 10 is equals to TENLETTERS.
     
     This is useful for flat files where there are multiple record layouts within the same file.
 

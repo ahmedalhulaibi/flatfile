@@ -17,15 +17,16 @@ func min(a, b int) int {
 
 Struct tags are in the form `flatfile:"col,len"`. col and len should be integers > 0
 
-startFieldIdx: index can be passed to indicate which struct field to start the unmarshal
+startFieldIdx: index can be passed to indicate which struct field to start the unmarshal. Zero indexed.
 
-numFieldsToMarshal: can be passed to indicate how many fields to unmarshal starting from startFieldIdx
+numFieldsToUnmarshal: can be passed to indicate how many fields to unmarshal starting from startFieldIdx
 
+isPartialUnmarshal: flag should be set to true if the data[0] is intended to be unmarshalled at startFieldIdx
 
-If startFieldIdx == 0 and umFieldsToMarshal == 0 then Unmarshal will attempt to marshal all fields with an ffp tag
+If startFieldIdx == 0 and umFieldsToMarshal == 0 then Unmarshal will attempt to unmarshal all fields with an ffp tag
 
 */
-func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal int) error {
+func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToUnmarshal int, isPartialUnmarshal bool) error {
 	colOffset := 0
 	//init ffpTag for later use
 	ffpTag := &flatfileTag{}
@@ -38,8 +39,8 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 			//Dereference pointer to struct
 			vStruct := reflect.ValueOf(v).Elem()
 			maxField := 0
-			if numFieldsToMarshal > 0 {
-				maxField = min(startFieldIdx+numFieldsToMarshal, vStruct.NumField())
+			if numFieldsToUnmarshal > 0 {
+				maxField = min(startFieldIdx+numFieldsToUnmarshal, vStruct.NumField())
 			} else {
 				maxField = vStruct.NumField()
 			}
@@ -55,23 +56,24 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 					if tagParseErr != nil {
 						return errors.Wrapf(tagParseErr, "flatfile.Unmarshal: Failed to parse field tag %s", fieldTag)
 					}
-					//determine pos offset based on start index in case start index not 1
-					if i == startFieldIdx {
-						colOffset = ffpTag.col - 1
-					}
+					if ShouldUnmarshal(ffpTag, data) {
+						//determine pos offset based on start index in case start index not 0 (1)
+						if i == startFieldIdx && startFieldIdx > 0 && isPartialUnmarshal {
+							colOffset = ffpTag.col - 1
+						}
 
-					//determine if the current field is in range of the posOffset passed
-					if ffpTag.col > colOffset {
-						//extract byte slice from byte data
-						lowerBound := ffpTag.col - 1 - colOffset
-						upperBound := lowerBound + ffpTag.length
-						//and check that pos does not exceed length of bytes to prevent attempting to parse nulls
-						if lowerBound < len(data) {
-							fieldData := data[lowerBound:upperBound]
-
-							err := assignBasedOnKind(fieldType.Kind(), vStruct.Field(i), fieldData, ffpTag)
-							if err != nil {
-								return errors.Wrap(err, "flatfile.Unmarshal: Failed to marshal")
+						//determine if the current field is in range of the posOffset passed
+						if ffpTag.col > colOffset {
+							//extract byte slice from byte data
+							lowerBound := ffpTag.col - 1 - colOffset
+							upperBound := lowerBound + ffpTag.length
+							//and check that pos does not exceed length of bytes to prevent attempting to parse nulls
+							if lowerBound < len(data) {
+								fieldData := data[lowerBound:upperBound]
+								err := assignBasedOnKind(fieldType.Kind(), vStruct.Field(i), fieldData, ffpTag)
+								if err != nil {
+									return errors.Wrap(err, "flatfile.Unmarshal: Failed to unmarshal")
+								}
 							}
 						}
 					}
@@ -83,7 +85,7 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 	return errors.Errorf("flatfile.Unmarshal: Unmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
 }
 
-//CalcNumFieldsToUnmarshal determines how many fields can be marshalled successfully
+//CalcNumFieldsToUnmarshal determines how many fields can be unmarshalled successfully
 //This currently will not return an accurate result for overlapping fields
 //For example:
 //type Profile struct {
@@ -91,7 +93,7 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 //		LastName  string `flatfile:"11,10"`
 //		FullName  string `flatfile:"1,20"`
 //}
-//Expected output is that 3 fields can be marshalled successfully
+//Expected output is that 3 fields can be unmarshalled successfully
 //The result will be 2
 //Another example:
 //type Profile struct
@@ -105,7 +107,7 @@ func Unmarshal(data []byte, v interface{}, startFieldIdx int, numFieldsToMarshal
 func CalcNumFieldsToUnmarshal(data []byte, v interface{}, fieldOffset int) (int, []byte, error) {
 	ffpTag := &flatfileTag{}
 	dataLen := len(data)
-	numFieldsToMarshal := 0
+	numFieldsToUnmarshal := 0
 	var remainder []byte
 	cumulativeRecLength := 0
 	if reflect.TypeOf(v).Kind() == reflect.Ptr {
@@ -128,7 +130,7 @@ func CalcNumFieldsToUnmarshal(data []byte, v interface{}, fieldOffset int) (int,
 
 					tagParseErr := parseFlatfileTag(fieldTag, ffpTag)
 					if tagParseErr != nil {
-						return 0, []byte(""), errors.Wrapf(tagParseErr, "flatfile.CalcNumFieldsToMarshal: Failed to parse field tag %s", fieldTag)
+						return 0, []byte(""), errors.Wrapf(tagParseErr, "flatfile.CalcNumFieldsToUnmarshal: Failed to parse field tag %s", fieldTag)
 					}
 
 					if ffpTag.occurs > 0 {
@@ -140,7 +142,7 @@ func CalcNumFieldsToUnmarshal(data []byte, v interface{}, fieldOffset int) (int,
 					}
 
 					if cumulativeRecLength <= dataLen {
-						numFieldsToMarshal++
+						numFieldsToUnmarshal++
 					} else {
 						remainder = data[(cumulativeRecLength - ffpTag.length):]
 						break
@@ -148,7 +150,18 @@ func CalcNumFieldsToUnmarshal(data []byte, v interface{}, fieldOffset int) (int,
 				}
 			}
 		}
-		return numFieldsToMarshal, remainder, nil
+		return numFieldsToUnmarshal, remainder, nil
 	}
-	return 0, []byte(""), errors.Errorf("flatfile.CalcNumFieldsToMarshal: CalcNumFieldsToMarshal not complete. %s is not a pointer", reflect.TypeOf(v))
+	return 0, []byte(""), errors.Errorf("flatfile.CalcNumFieldsToUnmarshal: CalcNumFieldsToUnmarshal not complete. %s is not a pointer", reflect.TypeOf(v))
+}
+
+//ShouldUnmarshal returns true if the condition
+func ShouldUnmarshal(ffpTag *flatfileTag, data []byte) bool {
+	if ffpTag.condChk {
+		lowerBound := ffpTag.condCol - 1
+		upperBound := lowerBound + ffpTag.condLen
+		return string(data[lowerBound:upperBound]) == ffpTag.condVal
+	}
+
+	return true
 }
