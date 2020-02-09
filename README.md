@@ -6,7 +6,7 @@
 
 The purpose of this package is provide a utility to read a record from a structured [flat-file database](https://en.wikipedia.org/wiki/Flat-file_database) or a record from a text file into a struct. The intent is to eliminate boilerplate code for reading data from a flat file and mapping it to the fields in a struct.
 
-This is allows you to define your record layout mapping using struct tags.
+This library allows you to define your record layout mapping using struct tags.
 
 This library provides a method `Unmarshal` which will convert a record (slice of bytes) into a struct.
 
