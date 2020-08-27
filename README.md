@@ -38,7 +38,7 @@ Columns 32, Length  2   = Customer Country
 
 Each field in a struct can be mapped to a single field in a record using a struct tag.
 
-Struct tags are in the form `flatfile:"col,len"` or for a slice field `flatfile:"col,len,occurences"`.
+Struct tags are in the form `flatfile:"col,len"` or for a slice field `flatfile:"col,len,occurrences"`.
 
 I can directly translate these to fields in a struct:
 
