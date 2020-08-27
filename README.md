@@ -12,7 +12,9 @@ This library provides a method `Unmarshal` which will convert a record (slice of
 
 # Usage
 
-Use your favourite dependency tool to pull the code. dep, go mod, etc. Or use go get.
+## Download
+
+Use your favourite dependency tool to pull the code. dep, go mod, etc.
 
 `go get github.com/ahmedalhulaibi/flatfile`
 
