@@ -4,11 +4,11 @@
 
 
 
-The purpose of this package is provide a utility to read a record from a structured [flat-file database](https://en.wikipedia.org/wiki/Flat-file_database) or a record from a text file into a struct. The intent is to eliminate boilerplate code for reading data from a flat file and mapping it to the fields in a struct.
+This package provides a utility to read a fixed-width record from a [flat-file database](https://en.wikipedia.org/wiki/Flat-file_database) or a text file. The intent is to eliminate boilerplate code for reading data from a flat file and mapping it to the fields in a struct.
 
-This library allows you to define your record layout mapping using struct tags.
+This package allows you to define your record layout mapping using struct tags.
 
-This library provides a method `Unmarshal` which will convert a record (slice of bytes) into a struct.
+This packge provides a method `Unmarshal` which will convert a record (slice of bytes) into a struct.
 
 # Usage
 
@@ -20,7 +20,7 @@ Use your favourite dependency tool to pull the code. dep, go mod, etc.
 
 ## Examples
 
-Please refer to [examples](https://github.com/ahmedalhulaibi/flatfile/tree/master/example) folder in repo for all examples.
+Please refer to the [examples](https://github.com/ahmedalhulaibi/flatfile/tree/master/example) folder in repo for all examples.
 
 Let's say I have a text file `customers.txt` which contains customer data. There are 2 records:
 
